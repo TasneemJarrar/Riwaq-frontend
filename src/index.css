@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F6F7FB;
+  --surface-1: #FFFFFF;
+  --surface-2: #FFFFFF;
+  --surface-3: #FFFFFF;
+  --surface-soft: #F0F1F6;
+  --surface-hover: #F8F8FC;
+  --border-color: #E1E3EA;
+
+  --primary: #6C5CE7;
+  --primary-dark: #5A4DC7;
+  --primary-hover: #6254D8;
+  --primary-pressed: #5145B6;
+  --primary-soft: #EEECFB;
+  --primary-subtle: #F5F3FE;
+  --primary-text: #5A4DC7;
+
+  --success: #328563;
+  --success-hover: #3B946F;
+  --success-soft: #E5F4ED;
+  --success-text: #286F53;
+
+  --gamification: #B97816;
+  --gamification-hover: #C48622;
+  --gamification-soft: #FFF3DA;
+  --gamification-text: #8C5D10;
+
+  --text-primary: #252837;
+  --text-secondary: #5E6272;
+  --text-tertiary: #858A99;
+  --text-disabled: #A8ACB8;
+
+  --input-bg: #FFFFFF;
+  --input-border: #D9DCE5;
+  --input-focus: #6C5CE7;
+  --input-focus-soft: #EEECFB;
+
+  --error: #B95757;
+  --error-soft: #F9EAEA;
+
+  --shadow-card-value: 0 1px 2px rgb(15 15 20 / 0.04), 0 2px 8px rgb(15 15 20 / 0.06);
+  --shadow-elevated-value: 0 4px 16px rgb(15 15 20 / 0.08), 0 8px 24px rgb(15 15 20 / 0.08);
+  --shadow-cta-value: 0 2px 8px rgb(108 92 231 / 0.18);
+}
+
+.dark {
+  --background: #11131A;
+  --surface-1: #171A23;
+  --surface-2: #1D202A;
+  --surface-3: #242734;
+  --surface-soft: #242734;
+  --surface-hover: #292D3B;
+  --border-color: #303442;
+
+  --primary: #6C5CE7;
+  --primary-dark: #A9A3D4;
+  --primary-hover: #7A6CE8;
+  --primary-pressed: #5C4FC7;
+  --primary-soft: #2B2842;
+  --primary-subtle: #242238;
+  --primary-text: #A9A3D4;
+
+  --success: #4FA982;
+  --success-hover: #5DB58F;
+  --success-soft: #20352D;
+  --success-text: #7BC19E;
+
+  --gamification: #D39A3A;
+  --gamification-hover: #DDAA50;
+  --gamification-soft: #3A3020;
+  --gamification-text: #E0B86A;
+
+  --text-primary: #E7E8EE;
+  --text-secondary: #A9ACB8;
+  --text-tertiary: #777C8C;
+  --text-disabled: #565B69;
+
+  --input-bg: #171A23;
+  --input-border: #303442;
+  --input-focus: #6C5CE7;
+  --input-focus-soft: #2B2842;
+
+  --error: #C96B6B;
+  --error-soft: #382528;
+
+  --shadow-card-value: 0 1px 2px rgb(0 0 0 / 0.24), 0 2px 8px rgb(0 0 0 / 0.28);
+  --shadow-elevated-value: 0 4px 16px rgb(0 0 0 / 0.32), 0 8px 24px rgb(0 0 0 / 0.36);
+  --shadow-cta-value: 0 2px 10px rgb(0 0 0 / 0.3);
+}
+
+@theme inline {
+  --color-background: var(--background);
+
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-hover: var(--surface-hover);
+
+  --color-border: var(--border-color);
+
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-pressed: var(--primary-pressed);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-text: var(--primary-text);
+
+  --color-success: var(--success);
+  --color-success-hover: var(--success-hover);
+  --color-success-soft: var(--success-soft);
+  --color-success-text: var(--success-text);
+
+  --color-gamification: var(--gamification);
+  --color-gamification-hover: var(--gamification-hover);
+  --color-gamification-soft: var(--gamification-soft);
+  --color-gamification-text: var(--gamification-text);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-input-focus: var(--input-focus);
+  --color-input-focus-soft: var(--input-focus-soft);
+
+  --color-error: var(--error);
+  --color-error-soft: var(--error-soft);
+
+  --radius-card: 20px;
+  --radius-pill: 24px;
+  --radius-modal: 28px;
+
+  --shadow-card: var(--shadow-card-value);
+  --shadow-elevated: var(--shadow-elevated-value);
+  --shadow-cta: var(--shadow-cta-value);
+
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: Tajawal, ui-sans-serif, system-ui, sans-serif;
+}
