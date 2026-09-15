@@ -1,27 +1,59 @@
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+
 export default function Footer() {
+  const { t, i18n } = useTranslation();
+
+  const handleLanguageChange = (lang: "en" | "ar") => {
+    i18n.changeLanguage(lang);
+  };
+
   return (
-    <footer className="border-t border-border bg-surface-1">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 md:flex-row">
-        <div className="text-text-primary font-semibold">SkillSwap</div>
+    <footer className="border-t border-slate-800/80 bg-[#0f141d] py-4 text-xs text-slate-400">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
+        <div>
+          © {new Date().getFullYear()} Riwaq Inc. All rights reserved.
+        </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-6">
-          <a href="#" className="text-sm text-text-secondary hover:text-text-primary">
-            About
-          </a>
-          <a href="#" className="text-sm text-text-secondary hover:text-text-primary">
-            Help Center
-          </a>
-          <a href="#" className="text-sm text-text-secondary hover:text-text-primary">
-            Privacy
-          </a>
-          <a href="#" className="text-sm text-text-secondary hover:text-text-primary">
-            Terms
-          </a>
-        </nav>
+        <div className="flex items-center gap-8">
+          <Link
+            to="/code-of-conduct"
+            className="transition-colors hover:text-slate-200"
+          >
+            {t("footer.codeOfConduct", "Code of Conduct")}
+          </Link>
+          <Link
+            to="/protocols"
+            className="transition-colors hover:text-slate-200"
+          >
+            {t("footer.protocols", "Skill Verification Protocols")}
+          </Link>
+        </div>
 
-        <p className="text-xs text-text-tertiary">
-          © {new Date().getFullYear()} SkillSwap. All rights reserved.
-        </p>
+        <div className="flex items-center rounded-full border border-slate-800 bg-slate-900/60 p-1">
+          <button
+            type="button"
+            onClick={() => handleLanguageChange("en")}
+            className={`rounded-full px-3 py-1 font-semibold transition-all ${
+              i18n.language === "en"
+                ? "bg-slate-800 text-slate-100 shadow-sm"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={() => handleLanguageChange("ar")}
+            className={`rounded-full px-3 py-1 font-semibold transition-all ${
+              i18n.language === "ar"
+                ? "bg-slate-800 text-slate-100 shadow-sm"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            AR
+          </button>
+        </div>
       </div>
     </footer>
   );
