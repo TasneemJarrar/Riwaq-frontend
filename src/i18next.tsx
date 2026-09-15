@@ -76,7 +76,7 @@ const resources = {
           encrypted: "ENCRYPTED LEDGER"
         },
         footer: {
-          status: "Network Operational · Global Mesh v2.4",
+          status: "Network Operational",
           privacy: "Privacy",
           protocol: "Peer Protocol",
           audit: "Audit Ledger"
@@ -156,7 +156,7 @@ const resources = {
           encrypted: "سجل مشفر"
         },
         footer: {
-          status: "الشبكة تعمل · الشبكة العالمية v2.4",
+          status: "الشبكة تعمل بشكل طبيعي",
           privacy: "الخصوصية",
           protocol: "بروتوكول الأقران",
           audit: "سجل التدقيق"

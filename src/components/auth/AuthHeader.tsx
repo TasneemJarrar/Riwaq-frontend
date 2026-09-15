@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Globe02Icon } from "@hugeicons/core-free-icons";
+import logo from "../../assets/image-removebg-preview.png"; // ← added
 
 export function AuthHeader() {
   const { i18n, t } = useTranslation();
@@ -14,7 +15,7 @@ export function AuthHeader() {
     <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
       <div className="flex items-center gap-3">
         {/* Icon */}
-        <img className="h-8 w-8  object-cover" src="./src/assets/image-removebg-preview.png" alt="Brand Icon" />
+        <img className="h-8 w-8  object-cover" src={logo} alt="Brand Icon" />
 
         {/* Brand Name */}
         <span className="text-xl font-bold tracking-tight text-text-primary">
@@ -24,7 +25,7 @@ export function AuthHeader() {
 
       <div className="flex items-center gap-4">
         {/* Protocol Status */}
-        <div className="flex items-center gap-2 rounded-full border border-border bg-surface-soft px-3.5 py-1 text-xs text-text-secondary">
+        <div className="md:flex hidden items-center gap-2 rounded-full border border-border bg-surface-soft px-3.5 py-1 text-xs text-text-secondary">
           <span className="h-2 w-2 animate-pulse rounded-full bg-success" />
           <span>{t("auth.zeroPayProtocol")}</span>
         </div>
