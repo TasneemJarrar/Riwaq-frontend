@@ -1,9 +1,11 @@
 import { Outlet } from "react-router-dom";
+import RouteSeo from "../components/seo/RouteSeo";
 
 export default function AuthLayout() {
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <RouteSeo />
       <Outlet />
-    </div>
+    </>
   );
 }
