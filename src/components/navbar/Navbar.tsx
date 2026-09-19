@@ -2,14 +2,16 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Sun01Icon, Moon02Icon, Mail01Icon, FlashIcon, Menu01Icon, Cancel01Icon, UserIcon } from "@hugeicons/core-free-icons";
+import { Sun01Icon, Moon02Icon, Mail01Icon, FlashIcon, Menu01Icon, Cancel01Icon, UserIcon, Logout01Icon } from "@hugeicons/core-free-icons";
 import useThemeStore from "../../hooks/useThemeStore";
 import logo from "../../assets/navbars/riwaq-logo.png";
+import { useLogout } from "../../hooks/useLogout";
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
   const { mode, toggleTheme } = useThemeStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const logout = useLogout();
 
   const navItems = [
     { label: t("nav.feed"), to: "/feed" },
@@ -109,6 +111,15 @@ export default function Navbar() {
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface-1" />
           </NavLink>
 
+          <button
+            type="button"
+            onClick={logout}
+            className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-text-secondary transition-colors hover:border-error hover:text-error sm:flex"
+            aria-label="Logout"
+          >
+            <HugeiconsIcon icon={Logout01Icon} size={18} />
+          </button>
+
           {/* Mobile menu toggle */}
           <button
             type="button"
@@ -150,6 +161,20 @@ export default function Navbar() {
               </div>
               Profile
             </NavLink>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen(false);
+                logout();
+              }}
+              className="flex items-center gap-2 text-sm font-medium text-text-secondary"
+            >
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-soft ring-2 ring-border">
+                <HugeiconsIcon icon={Logout01Icon} size={14} />
+              </div>
+              Logout
+            </button>
 
             <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface-soft px-3 py-1.5 text-xs text-text-secondary">
               <HugeiconsIcon icon={Mail01Icon} size={14} />
