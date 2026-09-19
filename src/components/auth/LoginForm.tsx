@@ -3,17 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ArrowRight01Icon,
-  ViewIcon,
-  ViewOffIcon,
-  LockPasswordIcon,
-  Mail01Icon,
-} from "@hugeicons/core-free-icons";
-import {
-  loginSchema,
-  type LoginFormData,
-} from "../../validation/authSchemas";
+import { ArrowRight01Icon, ViewIcon, ViewOffIcon, LockPasswordIcon, Mail01Icon } from "@hugeicons/core-free-icons";
+import { loginSchema, type LoginFormData } from "../../validation/authSchemas";
 import { useNavigate } from "react-router-dom";
 
 export function LoginForm() {
@@ -21,14 +12,11 @@ export function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: { keepSignedIn: true },
   });
+
 
   const onSubmit = (data: LoginFormData) => {
     console.log("Login Payload:", data);
@@ -53,11 +41,10 @@ export function LoginForm() {
             type="email"
             placeholder={t("auth.placeholders.email")}
             {...register("email")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.email
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
+            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${errors.email
+              ? "border-error focus:ring-error/30"
+              : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
           />
         </div>
 
@@ -93,11 +80,10 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             placeholder={t("auth.placeholders.password")}
             {...register("password")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-10 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.password
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
+            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-10 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${errors.password
+              ? "border-error focus:ring-error/30"
+              : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
           />
 
           <button

@@ -8,9 +8,11 @@ import './i18next';
 import { router } from './Router';
 import { CacheProvider } from '@emotion/react';
 import { cacheRtl, cacheLtr } from './rtlCache';
+import { useAuthTokenSync } from './hooks/useAuthTokenSync';
 
 
 export default function App() {
+  useAuthTokenSync();
   const { i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const mode = useThemeStore((state) => state.mode);
