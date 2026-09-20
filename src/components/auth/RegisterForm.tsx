@@ -3,36 +3,34 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ArrowRight01Icon,
-  ViewIcon,
-  ViewOffIcon,
-  LockPasswordIcon,
-  Mail01Icon,
-  UserIcon,
-} from "@hugeicons/core-free-icons";
-import {
-  registerSchema,
-  type RegisterFormData,
-} from "../../validation/authSchemas";
-import { useNavigate } from "react-router-dom";
+import { ArrowRight01Icon, ViewIcon, ViewOffIcon, LockPasswordIcon, Mail01Icon, UserIcon } from "@hugeicons/core-free-icons";
+import { registerSchema, type RegisterFormData, } from "../../validation/authSchemas";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+import { useCompleteFirebaseLogin } from "../../hooks/useCompleteFirebaseLogin";
+import { getFirebaseAuthErrorMessage } from "../../lib/firebaseAuthErrors";
 
 export function RegisterForm() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const completeFirebaseLogin = useCompleteFirebaseLogin();
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log("Register Payload:", data);
-    navigate("/onboarding");
+  const onSubmit = async (data: RegisterFormData) => {
+    setAuthError(null);
+
+    try {
+      const result = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      await updateProfile(result.user, { displayName: data.fullName });
+      await completeFirebaseLogin(result.user);
+    } catch (err) {
+      console.error(err);
+      setAuthError(getFirebaseAuthErrorMessage(err));
+    }
   };
 
   return (
@@ -53,11 +51,10 @@ export function RegisterForm() {
             type="text"
             placeholder={t("auth.placeholders.fullName")}
             {...register("fullName")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.fullName
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
+            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${errors.fullName
+              ? "border-error focus:ring-error/30"
+              : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
           />
         </div>
 
@@ -84,11 +81,10 @@ export function RegisterForm() {
             type="email"
             placeholder={t("auth.placeholders.email")}
             {...register("email")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.email
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
+            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${errors.email
+              ? "border-error focus:ring-error/30"
+              : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
           />
         </div>
 
@@ -115,11 +111,10 @@ export function RegisterForm() {
             type={showPassword ? "text" : "password"}
             placeholder={t("auth.placeholders.registerPassword")}
             {...register("password")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-10 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.password
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
+            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-10 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${errors.password
+              ? "border-error focus:ring-error/30"
+              : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
           />
 
           <button
@@ -143,6 +138,10 @@ export function RegisterForm() {
           <p className="mt-1 text-xs text-error">
             {errors.password.message}
           </p>
+        )}
+
+        {authError && (
+          <p className="text-xs text-error">{authError}</p>
         )}
       </div>
 

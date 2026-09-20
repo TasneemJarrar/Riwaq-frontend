@@ -5,12 +5,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon, ViewIcon, ViewOffIcon, LockPasswordIcon, Mail01Icon } from "@hugeicons/core-free-icons";
 import { loginSchema, type LoginFormData } from "../../validation/authSchemas";
-import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+import { useCompleteFirebaseLogin } from "../../hooks/useCompleteFirebaseLogin";
+import { getFirebaseAuthErrorMessage } from "../../lib/firebaseAuthErrors";
 
 export function LoginForm() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const completeFirebaseLogin = useCompleteFirebaseLogin();
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
@@ -18,9 +22,16 @@ export function LoginForm() {
   });
 
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Login Payload:", data);
-    navigate("/onboarding");
+  const onSubmit = async (data: LoginFormData) => {
+    setAuthError(null);
+
+    try {
+      const result = await signInWithEmailAndPassword(auth, data.email, data.password);
+      await completeFirebaseLogin(result.user);
+    } catch (err) {
+      console.error(err);
+      setAuthError(getFirebaseAuthErrorMessage(err));
+    }
   };
 
   return (
@@ -52,6 +63,10 @@ export function LoginForm() {
           <p className="mt-1 text-xs text-error">
             {errors.email.message}
           </p>
+        )}
+
+        {authError && (
+          <p className="text-xs text-error">{authError}</p>
         )}
       </div>
 

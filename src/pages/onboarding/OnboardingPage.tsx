@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon, Calendar01Icon, FlashIcon, ShieldEllipsisIcon, StarIcon, Timer02Icon, Add01Icon } from "@hugeicons/core-free-icons";
-import { mockSkills } from "../../data/mockSkills";
 import {
   SkillSelectorCard,
   type SelectedLearnSkill,
@@ -11,6 +10,8 @@ import {
 } from "../../components/onboarding/SkillSelectorCard";
 import { AuthHeader } from "../../components/auth/AuthHeader";
 import { AuthFooter } from "../../components/auth/AuthFooter";
+import { useSkills } from "../../hooks/useSkills";
+
 
 export default function OnboardingPage() {
   const { t } = useTranslation();
@@ -19,6 +20,9 @@ export default function OnboardingPage() {
   const [teachSkills, setTeachSkills] = useState<SelectedTeachSkill[]>([]);
   const [learnSkills, setLearnSkills] = useState<SelectedLearnSkill[]>([]);
   const [weeklyHours, setWeeklyHours] = useState<1 | 2 | 4>(2);
+  const { data: skills, isLoading: skillsLoading, isError: skillsError } = useSkills();
+
+  console.log(" Skills:", skills);
 
   const teachNames = useMemo(
     () =>
@@ -59,7 +63,7 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-background px-4 py-6 text-text-primary sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-primary-soft px-3.5 py-1 text-xs font-semibold text-primary-text">
+        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-primary-soft px-3.5 py-1 text-xs text-primary-text">
           <HugeiconsIcon icon={FlashIcon} size={14} />
           <span>{t("onboarding.algorithmBadge")}</span>
         </div>
@@ -94,21 +98,31 @@ export default function OnboardingPage() {
         </div>
 
         {/* Skill Cards */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <SkillSelectorCard
-            mode="teach"
-            skills={mockSkills}
-            selectedTeachSkills={teachSkills}
-            onTeachChange={setTeachSkills}
-          />
+        {skillsLoading && (
+          <p className="mt-8 text-sm text-text-secondary">Loading skills…</p>
+        )}
 
-          <SkillSelectorCard
-            mode="learn"
-            skills={mockSkills}
-            selectedLearnSkills={learnSkills}
-            onLearnChange={setLearnSkills}
-          />
-        </div>
+        {skillsError && (
+          <p className="mt-8 text-sm text-error">Couldn't load skills. Please refresh.</p>
+        )}
+
+        {!skillsLoading && !skillsError && (
+          <div className="mt-8 grid gap-6 lg:grid-cols-2">
+            <SkillSelectorCard
+              mode="teach"
+              skills={skills ?? []}
+              selectedTeachSkills={teachSkills}
+              onTeachChange={setTeachSkills}
+            />
+
+            <SkillSelectorCard
+              mode="learn"
+              skills={skills ?? []}
+              selectedLearnSkills={learnSkills}
+              onLearnChange={setLearnSkills}
+            />
+          </div>
+        )}
 
         {/* Weekly Commitment */}
         <div className="mt-6 rounded-3xl border border-border bg-surface-2 p-6 shadow-card sm:p-8">
