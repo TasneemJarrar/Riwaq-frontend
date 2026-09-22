@@ -59,6 +59,8 @@ const resources = {
           email: "Work or Academic Email",
           password: "Password",
           fullName: "Full Name",
+          firstName: "First Name",
+          lastName: "Last Name",
           keepSignedIn: "Keep me signed in on this device",
           agreeTerms: "I agree to the Knowledge Exchange Charter",
           forgotPassword: "Forgot?",
@@ -69,6 +71,8 @@ const resources = {
           password: "••••••••••••",
           registerPassword: "At least 8 characters",
           fullName: "Tasneem Jarrar",
+          firstName: "First name",
+          lastName: "Last name",
         },
 
         accessibility: {
@@ -388,6 +392,8 @@ const resources = {
           email: "البريد الإلكتروني للعمل أو الدراسة",
           password: "كلمة المرور",
           fullName: "الاسم الكامل",
+          firstName: "الاسم الأول",
+          lastName: "اسم العائلة",
           keepSignedIn: "إبقائي مسجلًا على هذا الجهاز",
           agreeTerms: "أوافق على ميثاق تبادل المعرفة",
           forgotPassword: "هل نسيت كلمة المرور؟",
@@ -398,6 +404,8 @@ const resources = {
           password: "••••••••••••",
           registerPassword: "8 أحرف على الأقل",
           fullName: "تسنيم جرار",
+          firstName: "الاسم الأول",
+          lastName: "اسم العائلة",
         },
 
         accessibility: {
