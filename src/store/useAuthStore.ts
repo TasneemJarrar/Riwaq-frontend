@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export interface AuthUser {
   userId: string;
+  firebaseUid: string | null;
   points: number;
   learningDirectionId: string | null;
   isNewUser: boolean;
@@ -32,7 +33,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.setItem("authUser", JSON.stringify(user));
     set({ user, idToken, isAuthenticated: true });
   },
-  
+
   refreshToken: (idToken) => {
     localStorage.setItem("accessToken", idToken);
     set({ idToken });
