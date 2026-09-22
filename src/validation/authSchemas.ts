@@ -10,7 +10,8 @@ export const loginSchema = yup.object({
 });
 
 export const registerSchema = yup.object({
-  fullName: yup.string().required("Full name is required"),
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
   email: yup
     .string()
     .email("Enter a valid email address")

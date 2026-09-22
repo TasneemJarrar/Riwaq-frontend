@@ -15,57 +15,105 @@ import {
   registerSchema,
   type RegisterFormData,
 } from "../../validation/authSchemas";
-import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+import { useCompleteFirebaseLogin } from "../../hooks/useCompleteFirebaseLogin";
+import { getFirebaseAuthErrorMessage } from "../../lib/firebaseAuthErrors";
 
 export function RegisterForm() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const completeFirebaseLogin = useCompleteFirebaseLogin();
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log("Register Payload:", data);
-    navigate("/onboarding");
+  const onSubmit = async (data: RegisterFormData) => {
+    setAuthError(null);
+
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+
+      await updateProfile(result.user, {
+        displayName: `${data.firstName} ${data.lastName}`.trim(),
+      });
+
+      await completeFirebaseLogin(result.user);
+    } catch (err) {
+      console.error(err);
+      setAuthError(getFirebaseAuthErrorMessage(err));
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Full Name */}
-      <div>
-        <label className="block text-xs font-semibold text-text-secondary">
-          {t("auth.labels.fullName")}
-        </label>
+      {/* First & Last Name */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-semibold text-text-secondary">
+            {t("auth.labels.firstName")}
+          </label>
 
-        <div className="relative mt-1.5">
-          <HugeiconsIcon
-            icon={UserIcon}
-            className="absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-tertiary"
-          />
+          <div className="relative mt-1.5">
+            <HugeiconsIcon
+              icon={UserIcon}
+              className="absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-tertiary"
+            />
 
-          <input
-            type="text"
-            placeholder={t("auth.placeholders.fullName")}
-            {...register("fullName")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.fullName
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
-          />
+            <input
+              type="text"
+              placeholder={t("auth.placeholders.firstName")}
+              {...register("firstName")}
+              className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
+                errors.firstName
+                  ? "border-error focus:ring-error/30"
+                  : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
+            />
+          </div>
+
+          {errors.firstName && (
+            <p className="mt-1 text-xs text-error">
+              {errors.firstName.message}
+            </p>
+          )}
         </div>
 
-        {errors.fullName && (
-          <p className="mt-1 text-xs text-error">
-            {errors.fullName.message}
-          </p>
-        )}
+        <div>
+          <label className="block text-xs font-semibold text-text-secondary">
+            {t("auth.labels.lastName")}
+          </label>
+
+          <div className="relative mt-1.5">
+            <HugeiconsIcon
+              icon={UserIcon}
+              className="absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-tertiary"
+            />
+
+            <input
+              type="text"
+              placeholder={t("auth.placeholders.lastName")}
+              {...register("lastName")}
+              className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
+                errors.lastName
+                  ? "border-error focus:ring-error/30"
+                  : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
+            />
+          </div>
+
+          {errors.lastName && (
+            <p className="mt-1 text-xs text-error">
+              {errors.lastName.message}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Email */}
@@ -84,11 +132,10 @@ export function RegisterForm() {
             type="email"
             placeholder={t("auth.placeholders.email")}
             {...register("email")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.email
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
+            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${errors.email
+              ? "border-error focus:ring-error/30"
+              : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
           />
         </div>
 
@@ -96,6 +143,10 @@ export function RegisterForm() {
           <p className="mt-1 text-xs text-error">
             {errors.email.message}
           </p>
+        )}
+
+        {authError && (
+          <p className="mt-1 text-xs text-error">{authError}</p>
         )}
       </div>
 
@@ -115,11 +166,10 @@ export function RegisterForm() {
             type={showPassword ? "text" : "password"}
             placeholder={t("auth.placeholders.registerPassword")}
             {...register("password")}
-            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-10 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${
-              errors.password
-                ? "border-error focus:ring-error/30"
-                : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
-            }`}
+            className={`w-full rounded-xl border bg-input-bg py-2.5 ps-10 pe-10 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:ring-2 ${errors.password
+              ? "border-error focus:ring-error/30"
+              : "border-input-border focus:border-input-focus focus:ring-input-focus-soft"
+              }`}
           />
 
           <button
@@ -143,6 +193,10 @@ export function RegisterForm() {
           <p className="mt-1 text-xs text-error">
             {errors.password.message}
           </p>
+        )}
+
+        {authError && (
+          <p className="text-xs text-error">{authError}</p>
         )}
       </div>
 
