@@ -7,6 +7,7 @@ const resources = {
   en: {
     translation: {
       brand: "Riwaq",
+
       nav: {
         feed: "Feed",
         discover: "Discover Mentors",
@@ -14,14 +15,17 @@ const resources = {
         chats: "Active Chats",
         leaderboard: "Leaderboard",
       },
+
       footer: {
         codeOfConduct: "Code of Conduct",
         protocols: "Skill Verification Protocols",
       },
+
       actions: {
         switchLang: "AR",
         toggleTheme: "Toggle theme",
       },
+
       auth: {
         zeroPayProtocol: "ZERO-PAY PROTOCOL",
         decentralizedExchange: "Decentralized Peer Exchange",
@@ -33,129 +37,162 @@ const resources = {
         realTimeMatches: "429 Real-Time Matches in Progress",
         avgResponseTime: "Average response time: 3.4 mins",
         fulfillmentRate: "99.4% Bilateral Fulfillment Rate",
+
         tabs: {
           login: "Log In",
-          signup: "Sign Up"
+          signup: "Sign Up",
         },
+
         titles: {
           login: "Access Peer Network",
-          signup: "Create Peer Account"
+          signup: "Create Peer Account",
         },
+
         subtitles: {
           login: "Authenticate your credentials to continue active exchanges",
-          signup: "Join thousands of peer mentors and start swapping skills"
+          signup: "Join thousands of peer mentors and start swapping skills",
         },
+
         orContinueWith: "Or continue with",
+
         labels: {
           email: "Work or Academic Email",
           password: "Password",
           fullName: "Full Name",
           keepSignedIn: "Keep me signed in on this device",
           agreeTerms: "I agree to the Knowledge Exchange Charter",
-          forgotPassword: "Forgot?"
+          forgotPassword: "Forgot?",
         },
+
         placeholders: {
           email: "peer@domain.com",
           password: "••••••••••••",
           registerPassword: "At least 8 characters",
-          fullName: "Tasneem Jarrar"
+          fullName: "Tasneem Jarrar",
         },
+
         accessibility: {
           showPassword: "Show password",
           hidePassword: "Hide password",
         },
+
         buttons: {
           loginSubmit: "Continue to Setup",
-          signupSubmit: "Create Account"
+          signupSubmit: "Create Account",
         },
+
         charterText: "By authenticating, you accept our",
         charterLink: "Knowledge Exchange Charter",
+
         badges: {
           zeroPay: "ZERO-PAY PEER PROTOCOL",
-          encrypted: "ENCRYPTED LEDGER"
+          encrypted: "ENCRYPTED LEDGER",
         },
+
         footer: {
           status: "Network Operational",
           privacy: "Privacy",
           protocol: "Peer Protocol",
-          audit: "Audit Ledger"
-        }
+          audit: "Audit Ledger",
+        },
       },
 
-      "common": {
-        "close": "Close",
-        "remove": "Remove"
+      common: {
+        close: "Close",
+        remove: "Remove",
       },
-      "onboarding": {
-        "algorithmBadge": "Personalized Knowledge Matching",
-        "heading": "Build your knowledge exchange profile",
-        "subheading": "Tell us what you can teach and what you want to learn so we can connect you with the right people.",
-        "pairingVelocity": {
-          "label": "Matching",
-          "value": "Personalized"
+
+      onboarding: {
+        algorithmBadge: "Personalized Knowledge Matching",
+        heading: "Build your knowledge exchange profile",
+        subheading: "Tell us what you can teach and what you want to learn so we can connect you with the right people.",
+
+        pairingVelocity: {
+          label: "Matching",
+          value: "Personalized",
         },
-        "teach": {
-          "title": "Skills I Can Teach",
-          "description": "Add skills you are confident sharing with other members.",
-          "selected": "{{count}} selected",
-          "searchPlaceholder": "Search skills you can teach...",
-          "currentOfferings": "Your skills",
-          "availableSkills": "Available skills"
+
+        learningMethod: {
+          title: "How do you want to learn?",
+          description: "Choose your preferred learning method first. This helps us show you the skills that fit your learning style.",
+          loading: "Loading learning methods...",
+          error: "We couldn't load the learning methods. Please try again.",
+          continue: "Continue",
+          saving: "Saving...",
         },
-        "learn": {
-          "title": "Skills I Want to Learn",
-          "description": "Choose the skills you want to develop through knowledge exchange.",
-          "goals": "{{count}} goals",
-          "searchPlaceholder": "Search skills you want to learn...",
-          "targetDisciplines": "Your learning goals",
-          "availableSkills": "Available skills"
+
+        teach: {
+          title: "Skills I Can Teach",
+          description: "Add skills you are confident sharing with other members.",
+          selected: "{{count}} selected",
+          searchPlaceholder: "Search skills you can teach...",
+          currentOfferings: "Your skills",
+          availableSkills: "Available skills",
         },
-        "noSkillsFound": "No skills found.",
-        "proficiency": {
-          "title": "Set your proficiency",
-          "description": "Choose the level that best describes your current ability in this skill.",
-          "confirm": "Add Skill",
-          "levels": {
-            "beginner": "Beginner",
-            "intermediate": "Intermediate",
-            "advanced": "Advanced",
-            "expert": "Expert"
+
+        learn: {
+          title: "Skills I Want to Learn",
+          description: "Choose the skills you want to develop through knowledge exchange.",
+          goals: "{{count}} goals",
+          searchPlaceholder: "Search skills you want to learn...",
+          targetDisciplines: "Your learning goals",
+          availableSkills: "Available skills",
+        },
+
+        noSkillsFound: "No skills found.",
+
+        proficiency: {
+          title: "Set your proficiency",
+          description: "Choose the level that best describes your current ability in this skill.",
+          confirm: "Add Skill",
+
+          levels: {
+            beginner: "Beginner",
+            intermediate: "Intermediate",
+            advanced: "Advanced",
+            expert: "Expert",
           },
-          "descriptions": {
-            "beginner": "I know the basics and am still learning.",
-            "intermediate": "I can use this skill independently.",
-            "advanced": "I have strong practical experience.",
-            "expert": "I have deep expertise and can mentor others."
-          }
-        },
-        "weeklyCommitment": {
-          "title": "Weekly Commitment",
-          "recommended": "Recommended: {{hours}} hours per week",
-          "hours": "{{hours}} hr"
-        },
-        "skillVerification": {
-          "label": "Skill Verification",
-          "description": "Verification can help build trust between peers.",
-          "tier": "Available"
-        },
-        "synergy": {
-          "title": "Knowledge Match",
-          "badge": "Smart Matching",
-          "description": "Your {{skills}} skills can help us find relevant knowledge exchange opportunities."
-        },
-        "actions": {
-          "skip": "Skip for now",
-          "karma": "+{{points}} Karma",
-          "complete": "Continue to Riwaq"
-        }
 
+          descriptions: {
+            beginner: "I know the basics and am still learning.",
+            intermediate: "I can use this skill independently.",
+            advanced: "I have strong practical experience.",
+            expert: "I have deep expertise and can mentor others.",
+          },
+        },
+
+        weeklyCommitment: {
+          title: "Weekly Commitment",
+          recommended: "Recommended: {{hours}} hours per week",
+          hours: "{{hours}} hr",
+        },
+
+        skillVerification: {
+          label: "Skill Verification",
+          description: "Verification can help build trust between peers.",
+          tier: "Available",
+        },
+
+        synergy: {
+          title: "Knowledge Match",
+          badge: "Smart Matching",
+          description: "Your {{skills}} skills can help us find relevant knowledge exchange opportunities.",
+        },
+
+        actions: {
+          skip: "Skip for now",
+          karma: "+{{points}} Karma",
+          complete: "Continue to Riwaq",
+        },
       },
+
       points: {
         status: "Points Synced",
         exchangeRules: "Exchange Rules",
         teachToEarn: "Teach to Earn",
         heading: "Points & Mentor Requests",
         subheading: "Turn the points you earn from teaching into extra mentor connection requests.",
+
         balance: {
           label: "Available Balance",
           unit: "PTS",
@@ -164,6 +201,7 @@ const resources = {
           quotaValue: "{{used}}/{{total}} Left",
           quotaReset: "Resets in {{days}} days",
         },
+
         stats: {
           lifetimeEarned: "Lifetime Earned",
           lifetimeGrowth: "+{{percent}}% this month",
@@ -172,6 +210,7 @@ const resources = {
           exchangeRatio: "Points Per Request",
           exchangeRatioValue: "{{points}} pts = 1 request",
         },
+
         howItWorks: {
           title: "How Points Work",
           step1Title: "Teach skills to peers",
@@ -183,11 +222,13 @@ const resources = {
           free: "Always free — no purchases",
           learnMore: "Learn more",
         },
+
         exchange: {
           title: "Exchange Your Points",
           subtitle: "Use your points instantly to add extra requests to your monthly quota.",
           selectTier: "Select a tier below",
           recommended: "RECOMMENDED • SAVE {{points}} PTS",
+
           tiers: {
             starter: {
               tag: "Entry",
@@ -198,6 +239,7 @@ const resources = {
               notIncluded: "No priority matching",
               cta: "Exchange for {{points}} Pts",
             },
+
             momentum: {
               tag: "Most Popular",
               name: "Progress Sprint",
@@ -210,6 +252,7 @@ const resources = {
               ],
               cta: "Exchange for {{points}} Pts",
             },
+
             mastery: {
               tag: "Best Value • Save {{points}} Pts",
               name: "Mastery Pack",
@@ -224,13 +267,19 @@ const resources = {
             },
           },
         },
+
         activity: {
           title: "Recent Activity",
           subtitle: "Your recent points earned and spent.",
-          filters: { all: "All", earned: "Earned", spent: "Spent" },
+          filters: {
+            all: "All",
+            earned: "Earned",
+            spent: "Spent",
+          },
           showing: "Showing {{shown}} of {{total}}",
           download: "Download Activity History (CSV)",
         },
+
         earnMore: {
           title: "Earn More Points",
           subtitle: "Open requests matching your skills. Help out and earn points instantly.",
@@ -239,61 +288,55 @@ const resources = {
           trustSubtitle: "Top {{percent}}% of mentor satisfaction",
         },
       },
+
       seo: {
         login: {
           title: "Log In | Riwaq",
-          description:
-            "Log in to Riwaq and continue exchanging skills and knowledge with your peers.",
+          description: "Log in to Riwaq and continue exchanging skills and knowledge with your peers.",
         },
 
         signup: {
           title: "Create Account | Riwaq",
-          description:
-            "Create your Riwaq account and start exchanging skills and knowledge with peers.",
+          description: "Create your Riwaq account and start exchanging skills and knowledge with peers.",
         },
 
         onboarding: {
           title: "Build Your Profile | Riwaq",
-          description:
-            "Tell Riwaq what you can teach and what you want to learn to find meaningful knowledge exchanges.",
+          description: "Tell Riwaq what you can teach and what you want to learn to find meaningful knowledge exchanges.",
         },
 
         feed: {
           title: "Feed | Riwaq",
-          description:
-            "Explore knowledge exchange opportunities and connect with peers on Riwaq.",
+          description: "Explore knowledge exchange opportunities and connect with peers on Riwaq.",
         },
 
         discover: {
           title: "Discover Mentors | Riwaq",
-          description:
-            "Discover peers and mentors who can help you learn new skills through direct knowledge exchange.",
+          description: "Discover peers and mentors who can help you learn new skills through direct knowledge exchange.",
         },
 
         points: {
           title: "Points Store | Riwaq",
-          description:
-            "Use your Riwaq points to access rewards and opportunities within the knowledge exchange community.",
+          description: "Use your Riwaq points to access rewards and opportunities within the knowledge exchange community.",
         },
 
         chats: {
           title: "Active Chats | Riwaq",
-          description:
-            "View and manage your active knowledge exchange conversations on Riwaq.",
+          description: "View and manage your active knowledge exchange conversations on Riwaq.",
         },
 
         leaderboard: {
           title: "Leaderboard | Riwaq",
-          description:
-            "See the Riwaq community leaderboard and explore member contributions.",
+          description: "See the Riwaq community leaderboard and explore member contributions.",
         },
       },
-
     },
   },
+
   ar: {
     translation: {
       brand: "رِواق",
+
       nav: {
         feed: "الرئيسية",
         discover: "استكشف المرشدين",
@@ -301,40 +344,46 @@ const resources = {
         chats: "المحادثات النشطة",
         leaderboard: "قائمة المتصدرين",
       },
+
       footer: {
         codeOfConduct: "قواعد السلوك",
         protocols: "بروتوكولات التحقق من المهارات",
       },
+
       actions: {
         switchLang: "EN",
         toggleTheme: "تبديل المظهر",
       },
+
       auth: {
         zeroPayProtocol: "بروتوكول التبادل دون مقابل مالي",
         decentralizedExchange: "تبادل مهارات لا مركزي",
         heroTitlePrefix: "طوّر مهاراتك من خلال",
         heroTitleHighlight: "التبادل المباشر بين الأقران",
-        heroSubtitle:
-          "شارك خبرتك في الهندسة والمنتجات والتصميم مقابل إرشاد فردي موثوق. تواصل حقيقي، وخبرات عملية، ودون أي معاملات مالية.",
+        heroSubtitle: "شارك خبرتك في الهندسة والمنتجات والتصميم مقابل إرشاد فردي موثوق. تواصل حقيقي، وخبرات عملية، ودون أي معاملات مالية.",
         activeExchanges: "التبادلات النشطة",
-        testimonialQuote:
-          "“بادلت ثلاث ساعات من خبرتي في هندسة Next.js مقابل تصميم أنظمة عالية التحويل. قيمة حقيقية.”",
+        testimonialQuote: "“بادلت ثلاث ساعات من خبرتي في هندسة Next.js مقابل تصميم أنظمة عالية التحويل. قيمة حقيقية.”",
         realTimeMatches: "429 عملية مطابقة نشطة حاليًا",
         avgResponseTime: "متوسط زمن الاستجابة: 3.4 دقائق",
         fulfillmentRate: "99.4% معدل نجاح التبادل",
+
         tabs: {
           login: "تسجيل الدخول",
           signup: "إنشاء حساب",
         },
+
         titles: {
           login: "الوصول إلى شبكة الأقران",
           signup: "إنشاء حساب جديد",
         },
+
         subtitles: {
           login: "تحقق من بيانات اعتمادك للمتابعة في عمليات التبادل النشطة",
           signup: "انضم إلى آلاف الموجهين وابدأ في تبادل المهارات",
         },
+
         orContinueWith: "أو المتابعة باستخدام",
+
         labels: {
           email: "البريد الإلكتروني للعمل أو الدراسة",
           password: "كلمة المرور",
@@ -343,26 +392,32 @@ const resources = {
           agreeTerms: "أوافق على ميثاق تبادل المعرفة",
           forgotPassword: "هل نسيت كلمة المرور؟",
         },
+
         placeholders: {
           email: "peer@domain.com",
           password: "••••••••••••",
           registerPassword: "8 أحرف على الأقل",
           fullName: "تسنيم جرار",
         },
+
         accessibility: {
           showPassword: "إظهار كلمة المرور",
           hidePassword: "إخفاء كلمة المرور",
         },
+
         buttons: {
           loginSubmit: "المتابعة إلى إعداد الحساب",
           signupSubmit: "إنشاء الحساب",
         },
+
         charterText: "بتسجيل الدخول، فإنك توافق على",
         charterLink: "ميثاق تبادل المعرفة",
+
         badges: {
           zeroPay: "بروتوكول تبادل المهارات دون مقابل مالي",
           encrypted: "سجل مشفر",
         },
+
         footer: {
           status: "الشبكة تعمل بشكل طبيعي",
           privacy: "الخصوصية",
@@ -379,18 +434,25 @@ const resources = {
       onboarding: {
         algorithmBadge: "مطابقة معرفية مخصصة",
         heading: "أنشئ ملفك الخاص لتبادل المعرفة",
-        subheading:
-          "أخبرنا بالمهارات التي يمكنك تعليمها والمهارات التي ترغب في تعلمها لنساعدك على التواصل مع الأشخاص المناسبين.",
+        subheading: "أخبرنا بالمهارات التي يمكنك تعليمها والمهارات التي ترغب في تعلمها لنساعدك على التواصل مع الأشخاص المناسبين.",
 
         pairingVelocity: {
           label: "المطابقة",
           value: "مخصصة",
         },
 
+        learningMethod: {
+          title: "كيف تريد أن تتعلم؟",
+          description: "اختر طريقة التعلم المفضلة لديك أولًا. سيساعدنا ذلك على عرض المهارات التي تناسب أسلوب تعلمك.",
+          loading: "جاري تحميل طرق التعلم...",
+          error: "تعذر تحميل طرق التعلم. حاول مرة أخرى.",
+          continue: "متابعة",
+          saving: "جاري الحفظ...",
+        },
+
         teach: {
           title: "المهارات التي يمكنني تعليمها",
-          description:
-            "أضف المهارات التي تمتلك فيها خبرة ويمكنك مشاركة معرفتك بها مع الأعضاء الآخرين.",
+          description: "أضف المهارات التي تمتلك فيها خبرة ويمكنك مشاركة معرفتك بها مع الأعضاء الآخرين.",
           selected: "{{count}} محددة",
           searchPlaceholder: "ابحث عن المهارات التي يمكنك تعليمها...",
           currentOfferings: "مهاراتك",
@@ -399,8 +461,7 @@ const resources = {
 
         learn: {
           title: "المهارات التي أريد تعلمها",
-          description:
-            "اختر المهارات التي ترغب في تطويرها من خلال تبادل المعرفة.",
+          description: "اختر المهارات التي ترغب في تطويرها من خلال تبادل المعرفة.",
           goals: "{{count}} أهداف",
           searchPlaceholder: "ابحث عن المهارات التي ترغب في تعلمها...",
           targetDisciplines: "أهدافك التعليمية",
@@ -411,15 +472,16 @@ const resources = {
 
         proficiency: {
           title: "حدد مستوى إتقانك",
-          description:
-            "اختر المستوى الذي يصف قدرتك الحالية في هذه المهارة بشكل أفضل.",
+          description: "اختر المستوى الذي يصف قدرتك الحالية في هذه المهارة بشكل أفضل.",
           confirm: "إضافة المهارة",
+
           levels: {
             beginner: "مبتدئ",
             intermediate: "متوسط",
             advanced: "متقدم",
             expert: "خبير",
           },
+
           descriptions: {
             beginner: "أعرف الأساسيات وما زلت أتعلم.",
             intermediate: "أستطيع استخدام هذه المهارة بشكل مستقل.",
@@ -436,16 +498,14 @@ const resources = {
 
         skillVerification: {
           label: "التحقق من المهارات",
-          description:
-            "يساعد التحقق من المهارة على بناء الثقة بين الأقران.",
+          description: "يساعد التحقق من المهارة على بناء الثقة بين الأقران.",
           tier: "متاح",
         },
 
         synergy: {
           title: "مطابقة المعرفة",
           badge: "مطابقة ذكية",
-          description:
-            "تساعدنا مهاراتك في {{skills}} على العثور على فرص مناسبة لتبادل المعرفة.",
+          description: "تساعدنا مهاراتك في {{skills}} على العثور على فرص مناسبة لتبادل المعرفة.",
         },
 
         actions: {
@@ -454,12 +514,14 @@ const resources = {
           complete: "المتابعة إلى رِواق",
         },
       },
+
       points: {
         status: "تمت مزامنة النقاط",
         exchangeRules: "قواعد التبادل",
         teachToEarn: "علّم لتربح",
         heading: "النقاط وطلبات الإرشاد",
         subheading: "حوّل النقاط التي تكسبها من التعليم إلى طلبات تواصل إضافية مع الموجهين.",
+
         balance: {
           label: "الرصيد المتاح",
           unit: "نقطة",
@@ -468,6 +530,7 @@ const resources = {
           quotaValue: "تم استخدام {{used}} من أصل {{total}}",
           quotaReset: "يتجدد خلال {{days}} أيام",
         },
+
         stats: {
           lifetimeEarned: "إجمالي المكتسب",
           lifetimeGrowth: "+{{percent}}% هذا الشهر",
@@ -476,6 +539,7 @@ const resources = {
           exchangeRatio: "النقاط لكل طلب",
           exchangeRatioValue: "{{points}} نقطة = طلب واحد",
         },
+
         howItWorks: {
           title: "كيف تعمل النقاط",
           step1Title: "علّم الأقران مهاراتك",
@@ -487,11 +551,13 @@ const resources = {
           free: "مجاني دائمًا — بلا مدفوعات",
           learnMore: "اعرف المزيد",
         },
+
         exchange: {
           title: "بادل نقاطك",
           subtitle: "استخدم نقاطك فورًا لإضافة طلبات إضافية إلى حصتك الشهرية.",
           selectTier: "اختر باقة أدناه",
           recommended: "موصى به • وفّر {{points}} نقطة",
+
           tiers: {
             starter: {
               tag: "أساسي",
@@ -502,6 +568,7 @@ const resources = {
               notIncluded: "بدون أولوية في المطابقة",
               cta: "بادل مقابل {{points}} نقطة",
             },
+
             momentum: {
               tag: "الأكثر رواجًا",
               name: "باقة التسارع",
@@ -514,6 +581,7 @@ const resources = {
               ],
               cta: "بادل مقابل {{points}} نقطة",
             },
+
             mastery: {
               tag: "الأفضل قيمة • وفّر {{points}} نقطة",
               name: "باقة الاحتراف",
@@ -528,13 +596,19 @@ const resources = {
             },
           },
         },
+
         activity: {
           title: "النشاط الأخير",
           subtitle: "نقاطك المكتسبة والمصروفة مؤخرًا.",
-          filters: { all: "الكل", earned: "مكتسب", spent: "مصروف" },
+          filters: {
+            all: "الكل",
+            earned: "مكتسب",
+            spent: "مصروف",
+          },
           showing: "عرض {{shown}} من {{total}}",
           download: "تنزيل سجل النشاط (CSV)",
         },
+
         earnMore: {
           title: "اكسب المزيد من النقاط",
           subtitle: "طلبات مفتوحة تطابق مهاراتك. ساعد واكسب نقاطًا فورًا.",
@@ -543,53 +617,46 @@ const resources = {
           trustSubtitle: "ضمن أفضل {{percent}}% من رضا المتعلمين",
         },
       },
+
       seo: {
         login: {
           title: "تسجيل الدخول | رِواق",
-          description:
-            "سجّل الدخول إلى رِواق واستمر في تبادل المهارات والمعرفة مع أقرانك.",
+          description: "سجّل الدخول إلى رِواق واستمر في تبادل المهارات والمعرفة مع أقرانك.",
         },
 
         signup: {
           title: "إنشاء حساب | رِواق",
-          description:
-            "أنشئ حسابك في رِواق وابدأ بتبادل المهارات والمعرفة مع الأقران.",
+          description: "أنشئ حسابك في رِواق وابدأ بتبادل المهارات والمعرفة مع الأقران.",
         },
 
         onboarding: {
           title: "إنشاء ملفك الشخصي | رِواق",
-          description:
-            "أخبر رِواق بالمهارات التي يمكنك تعليمها والمهارات التي ترغب في تعلمها للعثور على فرص مناسبة لتبادل المعرفة.",
+          description: "أخبر رِواق بالمهارات التي يمكنك تعليمها والمهارات التي ترغب في تعلمها للعثور على فرص مناسبة لتبادل المعرفة.",
         },
 
         feed: {
           title: "الرئيسية | رِواق",
-          description:
-            "استكشف فرص تبادل المعرفة وتواصل مع الأقران عبر رِواق.",
+          description: "استكشف فرص تبادل المعرفة وتواصل مع الأقران عبر رِواق.",
         },
 
         discover: {
           title: "استكشف المرشدين | رِواق",
-          description:
-            "اكتشف الأقران والمرشدين الذين يمكنهم مساعدتك على تعلم مهارات جديدة من خلال تبادل المعرفة المباشر.",
+          description: "اكتشف الأقران والمرشدين الذين يمكنهم مساعدتك على تعلم مهارات جديدة من خلال تبادل المعرفة المباشر.",
         },
 
         points: {
           title: "متجر النقاط | رِواق",
-          description:
-            "استخدم نقاط رِواق للوصول إلى المكافآت والفرص داخل مجتمع تبادل المعرفة.",
+          description: "استخدم نقاط رِواق للوصول إلى المكافآت والفرص داخل مجتمع تبادل المعرفة.",
         },
 
         chats: {
           title: "المحادثات النشطة | رِواق",
-          description:
-            "استعرض وأدر محادثات تبادل المعرفة النشطة الخاصة بك على رِواق.",
+          description: "استعرض وأدر محادثات تبادل المعرفة النشطة الخاصة بك على رِواق.",
         },
 
         leaderboard: {
           title: "قائمة المتصدرين | رِواق",
-          description:
-            "استعرض قائمة المتصدرين في مجتمع رِواق واكتشف مساهمات الأعضاء.",
+          description: "استعرض قائمة المتصدرين في مجتمع رِواق واكتشف مساهمات الأعضاء.",
         },
       },
     },
