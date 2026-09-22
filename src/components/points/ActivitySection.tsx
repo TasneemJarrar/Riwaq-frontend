@@ -7,18 +7,17 @@ import {
   RefreshIcon,
 } from "@hugeicons/core-free-icons";
 
-import {
-  activityItems,
-  type ActivityType,
-} from "../../data/pointsData";
+import { usePointsTransactions } from "../../hooks/usePoints";
+import type { ActivityType } from "../../api/types/points";
 
 type ActivityFilter = "all" | "earned" | "spent";
 
 export default function ActivitySection() {
   const { t } = useTranslation();
+  const { data: activityItems = [], isLoading, isError } =
+    usePointsTransactions();
 
-  const [filter, setFilter] =
-    useState<ActivityFilter>("all");
+  const [filter, setFilter] = useState<ActivityFilter>("all");
 
   const filteredItems = useMemo(() => {
     if (filter === "all") {
@@ -26,15 +25,11 @@ export default function ActivitySection() {
     }
 
     if (filter === "earned") {
-      return activityItems.filter(
-        (item) => item.type !== "spent"
-      );
+      return activityItems.filter((item) => item.type !== "spent");
     }
 
-    return activityItems.filter(
-      (item) => item.type === "spent"
-    );
-  }, [filter]);
+    return activityItems.filter((item) => item.type === "spent");
+  }, [filter, activityItems]);
 
   const activityIcon = (type: ActivityType) => {
     if (type === "spent") {
@@ -109,7 +104,26 @@ export default function ActivitySection() {
 
       {/* Activity List */}
       <div className="mt-5 divide-y divide-border">
-        {filteredItems.length > 0 ? (
+        {isLoading ? (
+          <div className="space-y-4 py-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-4">
+                <div className="h-10 w-10 shrink-0 animate-pulse rounded-xl bg-surface-soft" />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="h-4 w-3/4 animate-pulse rounded bg-surface-soft" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-surface-soft" />
+                </div>
+                <div className="h-4 w-16 animate-pulse rounded bg-surface-soft" />
+              </div>
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="py-10 text-center">
+            <p className="text-sm text-error">
+              Failed to load activity. Please try again.
+            </p>
+          </div>
+        ) : filteredItems.length > 0 ? (
           filteredItems.map((item) => {
             const Icon = activityIcon(item.type);
 

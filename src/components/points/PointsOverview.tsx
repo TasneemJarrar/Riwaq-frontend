@@ -7,9 +7,21 @@ import {
   ShieldEllipsisIcon,
   TrendingUpIcon,
 } from "@hugeicons/core-free-icons";
+import { usePointsBalance, usePointsStats } from "../../hooks/usePoints";
 
 export default function PointsOverview() {
   const { t } = useTranslation();
+  const { data: balanceData, isLoading: balanceLoading, isError: balanceError } =
+    usePointsBalance();
+  const {
+    lifetimeEarned,
+    pointsRedeemed,
+    redeemedCount,
+    isLoading: statsLoading,
+  } = usePointsStats();
+
+  const balance = balanceData?.points ?? 0;
+  const isLoading = balanceLoading || statsLoading;
 
   return (
     <>
@@ -67,9 +79,15 @@ export default function PointsOverview() {
               </p>
 
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-4xl font-bold tracking-tight text-text-primary">
-                  450
-                </span>
+                {isLoading ? (
+                  <span className="h-10 w-24 animate-pulse rounded-lg bg-surface-soft" />
+                ) : balanceError ? (
+                  <span className="text-2xl font-bold text-error">—</span>
+                ) : (
+                  <span className="text-4xl font-bold tracking-tight text-text-primary">
+                    {balance.toLocaleString()}
+                  </span>
+                )}
 
                 <span className="text-sm font-medium text-text-tertiary">
                   {t("points.balance.unit")}
@@ -131,9 +149,13 @@ export default function PointsOverview() {
                   {t("points.stats.lifetimeEarned")}
                 </p>
 
-                <p className="mt-1 text-2xl font-bold text-text-primary">
-                  1,250
-                </p>
+                {isLoading ? (
+                  <div className="mt-1 h-8 w-20 animate-pulse rounded-lg bg-surface-soft" />
+                ) : (
+                  <p className="mt-1 text-2xl font-bold text-text-primary">
+                    {lifetimeEarned.toLocaleString()}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -159,15 +181,19 @@ export default function PointsOverview() {
                   {t("points.stats.pointsRedeemed")}
                 </p>
 
-                <p className="mt-1 text-2xl font-bold text-text-primary">
-                  800
-                </p>
+                {isLoading ? (
+                  <div className="mt-1 h-8 w-20 animate-pulse rounded-lg bg-surface-soft" />
+                ) : (
+                  <p className="mt-1 text-2xl font-bold text-text-primary">
+                    {pointsRedeemed.toLocaleString()}
+                  </p>
+                )}
               </div>
             </div>
 
             <p className="mt-5 text-xs text-text-tertiary">
               {t("points.stats.redeemedCount", {
-                count: 8,
+                count: redeemedCount,
               })}
             </p>
           </div>
