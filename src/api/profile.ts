@@ -96,6 +96,47 @@ export interface EducationalContentResponse {
   updatedAt: string;
 }
 
+export interface CreateEducationalContentRequest {
+  title: string | null;
+  description: string | null;
+  contentType: string | null;
+  contentUrl: string | null;
+}
+
+export interface UpdateEducationalContentRequest {
+  title: string | null;
+  description: string | null;
+  contentType: string | null;
+  contentUrl: string | null;
+}
+
+/** Ratings */
+export interface RatingResponse {
+  id: string;
+  score: number;
+  review: string | null;
+  rater: PublicUserProfileResponse;
+  ratedUser: PublicUserProfileResponse;
+  learningSessionId: string;
+  createdAt: string;
+}
+
+/** Comments */
+export interface CommentResponse {
+  id: string;
+  userId: string;
+  educationalContentId: string;
+  parentCommentId: string | null;
+  content: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCommentRequest {
+  content: string | null;
+  parentCommentId?: string | null;
+}
+
 export const profileApi = {
   getMe: async (): Promise<UserProfileResponse> => {
     const { data } = await authAxiosInstance.get<UserProfileResponse>(
@@ -197,5 +238,107 @@ export const profileApi = {
       "/api/educational-content"
     );
     return data;
+  },
+
+  getUserRatings: async (userId: string): Promise<RatingResponse[]> => {
+    const { data } = await authAxiosInstance.get<RatingResponse[]>(
+      `/api/profiles/${userId}/ratings`
+    );
+    return data;
+  },
+
+  createEducationalContent: async (
+    payload: CreateEducationalContentRequest
+  ): Promise<EducationalContentResponse> => {
+    const { data } = await authAxiosInstance.post<EducationalContentResponse>(
+      "/api/educational-content",
+      payload
+    );
+    return data;
+  },
+
+  updateEducationalContent: async (
+    id: string,
+    payload: UpdateEducationalContentRequest
+  ): Promise<EducationalContentResponse> => {
+    const { data } = await authAxiosInstance.patch<EducationalContentResponse>(
+      `/api/educational-content/${id}`,
+      payload
+    );
+    return data;
+  },
+
+  deleteEducationalContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.delete(`/api/educational-content/${id}`);
+  },
+
+  getEducationalContentById: async (
+    id: string
+  ): Promise<EducationalContentResponse> => {
+    const { data } = await authAxiosInstance.get<EducationalContentResponse>(
+      `/api/educational-content/${id}`
+    );
+    return data;
+  },
+
+  likeContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.post(`/api/educational-content/${id}/likes`);
+  },
+
+  unlikeContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.delete(`/api/educational-content/${id}/likes`);
+  },
+
+  saveContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.post(`/api/educational-content/${id}/saves`);
+  },
+
+  unsaveContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.delete(`/api/educational-content/${id}/saves`);
+  },
+
+  repostContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.post(`/api/educational-content/${id}/reposts`);
+  },
+
+  unrepostContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.delete(`/api/educational-content/${id}/reposts`);
+  },
+
+  shareContent: async (id: string): Promise<void> => {
+    await authAxiosInstance.post(`/api/educational-content/${id}/shares`);
+  },
+
+  getComments: async (contentId: string): Promise<CommentResponse[]> => {
+    const { data } = await authAxiosInstance.get<CommentResponse[]>(
+      `/api/educational-content/${contentId}/comments`
+    );
+    return data;
+  },
+
+  createComment: async (
+    contentId: string,
+    payload: CreateCommentRequest
+  ): Promise<CommentResponse> => {
+    const { data } = await authAxiosInstance.post<CommentResponse>(
+      `/api/educational-content/${contentId}/comments`,
+      payload
+    );
+    return data;
+  },
+  
+  updateComment: async (
+    commentId: string,
+    payload: { content: string | null }
+  ): Promise<CommentResponse> => {
+    const { data } = await authAxiosInstance.patch<CommentResponse>(
+      `/api/comments/${commentId}`,
+      payload
+    );
+    return data;
+  },
+
+  deleteComment: async (commentId: string): Promise<void> => {
+    await authAxiosInstance.delete(`/api/comments/${commentId}`);
   },
 };

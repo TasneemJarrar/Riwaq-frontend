@@ -2,7 +2,25 @@ import { useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { getAuth } from "firebase/auth";
-import { useMyProfile, useUpdateMyProfile } from "../../hooks/useProfile";
+import {
+  useMyProfile,
+  useUpdateMyProfile,
+  useMyExperiences,
+  useMyProgress,
+  useMyLearningSessions,
+  useMyEducationalContent,
+  useUserRatings,
+  useCreateExperience,
+  useUpdateExperience,
+  useDeleteExperience,
+  useCreateEducationalContent,
+  useUpdateEducationalContent,
+  useDeleteEducationalContent,
+} from "../../hooks/useProfile";
+import type {
+  ExperienceResponse,
+  EducationalContentResponse,
+} from "../../api/profile";
 import { useProfileSkills } from "../../hooks/useProfileSkills";
 import {
   useLearningDirections,
@@ -14,9 +32,19 @@ import ProfileStats from "./components/ProfileStats";
 import ProfileAbout from "./components/ProfileAbout";
 import ProfileTabs, { type ProfileTab } from "./components/ProfileTabs";
 import ProfileSkillsSection from "./components/ProfileSkillsSection";
-import PlaceholderSection from "./components/PlaceholderSection";
+import ProfileReviews from "./components/ProfileReviews";
+import ProfileContent from "./components/ProfileContent";
+import ProfileExperiences from "./components/ProfileExperiences";
+import ProfileProgress from "./components/ProfileProgress";
+import ProfileSessions from "./components/ProfileSessions";
 import EditProfileModal from "./components/EditProfileModal";
 import EditSkillsModal from "./components/EditSkillsModal";
+import ExperienceModal, {
+  type ExperienceFormState,
+} from "./components/ExperienceModal";
+import ContentModal, {
+  type ContentFormState,
+} from "./components/ContentModal";
 
 export interface ProfileFormState {
   firstName: string;
@@ -59,6 +87,44 @@ export default function ProfilePage() {
     isPending: isUpdatingLearningDirection,
   } = useUpdateLearningDirection();
 
+  const {
+    data: ratings = [],
+    isLoading: ratingsLoading,
+    isError: ratingsError,
+  } = useUserRatings(profile?.userId);
+
+  const {
+    data: content = [],
+    isLoading: contentLoading,
+    isError: contentError,
+  } = useMyEducationalContent();
+
+  const {
+    data: experiences = [],
+    isLoading: experiencesLoading,
+    isError: experiencesError,
+  } = useMyExperiences();
+
+  const {
+    data: progress = [],
+    isLoading: progressLoading,
+    isError: progressError,
+  } = useMyProgress();
+
+  const {
+    data: sessions = [],
+    isLoading: sessionsLoading,
+    isError: sessionsError,
+  } = useMyLearningSessions();
+
+  const createExperience = useCreateExperience();
+  const updateExperience = useUpdateExperience();
+  const deleteExperience = useDeleteExperience();
+
+  const createContent = useCreateEducationalContent();
+  const updateContent = useUpdateEducationalContent();
+  const deleteContent = useDeleteEducationalContent();
+
   const [activeTab, setActiveTab] = useState<ProfileTab>("skills");
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isEditSkillsOpen, setIsEditSkillsOpen] = useState(false);
@@ -71,6 +137,24 @@ export default function ProfilePage() {
     lastName: "",
     bio: "",
     university: "",
+  });
+
+  const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
+  const [editingExperience, setEditingExperience] =
+    useState<ExperienceResponse | null>(null);
+  const [experienceForm, setExperienceForm] = useState<ExperienceFormState>({
+    title: "",
+    description: "",
+  });
+
+  const [isContentModalOpen, setIsContentModalOpen] = useState(false);
+  const [editingContent, setEditingContent] =
+    useState<EducationalContentResponse | null>(null);
+  const [contentForm, setContentForm] = useState<ContentFormState>({
+    title: "",
+    description: "",
+    contentType: "",
+    contentUrl: "",
   });
 
   const firebaseUser = getAuth().currentUser;
@@ -158,6 +242,97 @@ export default function ProfilePage() {
     await removeSkill(skillId);
   };
 
+  const openCreateExperience = () => {
+    setEditingExperience(null);
+    setExperienceForm({ title: "", description: "" });
+    setIsExperienceModalOpen(true);
+  };
+
+  const openEditExperience = (exp: ExperienceResponse) => {
+    setEditingExperience(exp);
+    setExperienceForm({
+      title: exp.title ?? "",
+      description: exp.description ?? "",
+    });
+    setIsExperienceModalOpen(true);
+  };
+
+  const handleExperienceSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const payload = {
+      title: experienceForm.title.trim() || null,
+      description: experienceForm.description.trim() || null,
+    };
+
+    if (editingExperience) {
+      await updateExperience.mutateAsync({
+        id: editingExperience.id,
+        payload,
+      });
+    } else {
+      await createExperience.mutateAsync(payload);
+    }
+
+    setIsExperienceModalOpen(false);
+    setEditingExperience(null);
+  };
+
+  const handleDeleteExperience = async (id: string) => {
+    const confirmed = window.confirm(t("profile.experiences.deleteConfirm"));
+    if (!confirmed) return;
+    await deleteExperience.mutateAsync(id);
+  };
+
+  const openCreateContent = () => {
+    setEditingContent(null);
+    setContentForm({
+      title: "",
+      description: "",
+      contentType: "",
+      contentUrl: "",
+    });
+    setIsContentModalOpen(true);
+  };
+
+  const openEditContent = (item: EducationalContentResponse) => {
+    setEditingContent(item);
+    setContentForm({
+      title: item.title ?? "",
+      description: item.description ?? "",
+      contentType: item.contentType ?? "",
+      contentUrl: item.contentUrl ?? "",
+    });
+    setIsContentModalOpen(true);
+  };
+
+  const handleContentSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const payload = {
+      title: contentForm.title.trim() || null,
+      description: contentForm.description.trim() || null,
+      contentType: contentForm.contentType.trim() || null,
+      contentUrl: contentForm.contentUrl.trim() || null,
+    };
+
+    if (editingContent) {
+      await updateContent.mutateAsync({
+        id: editingContent.id,
+        payload,
+      });
+    } else {
+      await createContent.mutateAsync(payload);
+    }
+
+    setIsContentModalOpen(false);
+    setEditingContent(null);
+  };
+
+  const handleDeleteContent = async (id: string) => {
+    const confirmed = window.confirm(t("profile.content.deleteConfirm"));
+    if (!confirmed) return;
+    await deleteContent.mutateAsync(id);
+  };
+
   if (profileLoading) {
     return (
       <div className="min-h-[calc(100vh-64px)] bg-background px-4 py-8 text-text-primary sm:px-6 lg:px-8">
@@ -203,10 +378,7 @@ export default function ProfilePage() {
               learningDirectionName={currentLearningDirection?.name}
             />
 
-            <ProfileAbout
-              bio={profile.bio}
-              onEdit={openEditProfile}
-            />
+            <ProfileAbout bio={profile.bio} onEdit={openEditProfile} />
           </div>
         </section>
 
@@ -222,24 +394,49 @@ export default function ProfilePage() {
         )}
 
         {activeTab === "reviews" && (
-          <PlaceholderSection
-            title={t("profile.tabs.reviews")}
-            description={t("profile.comingSoon.reviews")}
+          <ProfileReviews
+            ratings={ratings}
+            isLoading={ratingsLoading}
+            isError={ratingsError}
           />
         )}
 
         {activeTab === "content" && (
-          <PlaceholderSection
-            title={t("profile.tabs.content")}
-            description={t("profile.comingSoon.content")}
-          />
+          <div className="mt-6">
+            <ProfileContent
+              content={content}
+              isLoading={contentLoading}
+              isError={contentError}
+              onAdd={openCreateContent}
+              onEdit={openEditContent}
+              onDelete={handleDeleteContent}
+              isDeleting={deleteContent.isPending}
+            />
+          </div>
         )}
 
         {activeTab === "history" && (
-          <PlaceholderSection
-            title={t("profile.tabs.history")}
-            description={t("profile.comingSoon.history")}
-          />
+          <div className="mt-6 space-y-6">
+            <ProfileProgress
+              progress={progress}
+              isLoading={progressLoading}
+              isError={progressError}
+            />
+            <ProfileExperiences
+              experiences={experiences}
+              isLoading={experiencesLoading}
+              isError={experiencesError}
+              onAdd={openCreateExperience}
+              onEdit={openEditExperience}
+              onDelete={handleDeleteExperience}
+              isDeleting={deleteExperience.isPending}
+            />
+            <ProfileSessions
+              sessions={sessions}
+              isLoading={sessionsLoading}
+              isError={sessionsError}
+            />
+          </div>
         )}
       </main>
 
@@ -271,6 +468,36 @@ export default function ProfilePage() {
           onAddSkill={handleAddSkill}
           onRemoveSkill={handleRemoveSkill}
           onClose={() => setIsEditSkillsOpen(false)}
+        />
+      )}
+
+      {isExperienceModalOpen && (
+        <ExperienceModal
+          mode={editingExperience ? "edit" : "create"}
+          form={experienceForm}
+          setForm={setExperienceForm}
+          isSaving={
+            createExperience.isPending || updateExperience.isPending
+          }
+          onClose={() => {
+            setIsExperienceModalOpen(false);
+            setEditingExperience(null);
+          }}
+          onSubmit={handleExperienceSubmit}
+        />
+      )}
+
+      {isContentModalOpen && (
+        <ContentModal
+          mode={editingContent ? "edit" : "create"}
+          form={contentForm}
+          setForm={setContentForm}
+          isSaving={createContent.isPending || updateContent.isPending}
+          onClose={() => {
+            setIsContentModalOpen(false);
+            setEditingContent(null);
+          }}
+          onSubmit={handleContentSubmit}
         />
       )}
     </div>

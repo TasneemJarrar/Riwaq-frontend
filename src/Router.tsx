@@ -12,6 +12,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ChatPage from "./pages/chat/ChatPage";
 import GuestRoute from "./routing/GuestRoute";
 import ProtectedRoute from "./routing/ProtectedRoute";
+import ContentDetailPage from "./pages/content/ContentDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,7 @@ export const router = createBrowserRouter([
           { path: "/points", element: <PointsPage />, handle: { seoKey: "points" } },
           { path: "/leaderboard", element: <LeaderboardPage />, handle: { seoKey: "leaderboard" } },
           { path: "/profile", element: <ProfilePage />, handle: { seoKey: "profile" } },
+          { path: "/content/:id", element: <ContentDetailPage />, handle: { seoKey: "contentDetail" } },
         ],
       },
     ],
