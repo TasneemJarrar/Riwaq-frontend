@@ -7,7 +7,7 @@ import {
   ShieldEllipsisIcon,
   TrendingUpIcon,
 } from "@hugeicons/core-free-icons";
-import { usePointsBalance, usePointsStats } from "../../hooks/usePoints";
+import { usePointsBalance, usePointsStats } from "../../../hooks/usePoints";
 
 export default function PointsOverview() {
   const { t } = useTranslation();

@@ -5,7 +5,7 @@ import type {
   ActivityType,
   PointsTransactionResponse,
   PurchasePointsRequest,
-} from "../api/types/points";
+} from "../api/points";
 
 export const pointsKeys = {
   all: ["points"] as const,

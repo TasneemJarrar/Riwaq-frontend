@@ -9,7 +9,7 @@ import {
 import {
   useReceivedConnectionRequests,
   useUpdateConnectionRequestStatus,
-} from "../../hooks/useConnections";
+} from "../../../hooks/useConnections";
 
 export default function EarnPointsSection() {
   const { t } = useTranslation();
