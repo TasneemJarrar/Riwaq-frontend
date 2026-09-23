@@ -11,11 +11,6 @@ interface FirebaseLoginResponse {
   isNewUser: boolean;
 }
 
-/**
- * Shared "last mile" of every auth method (Google, email/password login,
- * email/password register): take a Firebase user, exchange its idToken
- * with our backend, persist the session, and redirect based on isNewUser.
- */
 export function useCompleteFirebaseLogin() {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -29,14 +24,15 @@ export function useCompleteFirebaseLogin() {
     );
 
     const user: AuthUser = {
-      userId: data.userId,
-      points: data.points,
-      learningDirectionId: data.learningDirectionId,
-      isNewUser: data.isNewUser,
-      email: firebaseUser.email,
-      displayName: firebaseUser.displayName,
-      photoURL: firebaseUser.photoURL,
-    };
+  userId: data.userId,
+  firebaseUid: data.firebaseUid ?? firebaseUser.uid,
+  points: data.points,
+  learningDirectionId: data.learningDirectionId,
+  isNewUser: data.isNewUser,
+  email: firebaseUser.email,
+  displayName: firebaseUser.displayName,
+  photoURL: firebaseUser.photoURL,
+};
 
     setAuth(user, idToken);
     navigate(data.isNewUser ? "/onboarding" : "/feed");

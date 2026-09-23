@@ -28,13 +28,7 @@ export default function PointsOverview() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="mb-2 flex items-center gap-2">
-            <span className="flex items-center gap-2 rounded-full bg-success-soft px-3 py-1 text-xs font-semibold text-success-text">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
-              {t("points.status")}
-            </span>
-          </div>
-
+          
           <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
             {t("points.heading")}
           </h1>
@@ -208,7 +202,7 @@ export default function PointsOverview() {
 
                 <p className="mt-1 text-2xl font-bold text-text-primary">
                   {t("points.stats.exchangeRatioValue", {
-                    points: 100,
+                    points: 15,
                   })}
                 </p>
               </div>

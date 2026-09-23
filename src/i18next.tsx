@@ -73,6 +73,7 @@ const resources = {
           fullName: "Tasneem Jarrar",
           firstName: "First name",
           lastName: "Last name",
+          loadingLearningDirections: "Loading learning directions…",
         },
 
         accessibility: {
@@ -293,6 +294,159 @@ const resources = {
         },
       },
 
+      "profile": {
+        "unknownUser": "Unnamed user",
+        "verified": "Verified",
+        "edit": "Edit",
+        "editLabel": "Profile",
+        "editProfile": "Edit profile",
+        "aboutTitle": "About",
+        "noBio": "No bio added yet.",
+        "university": "University",
+        "points": "Points",
+        "skillsCount": "Skills",
+        "learningDirection": "Learning direction",
+        "notSet": "Not set",
+
+        "error": {
+          "title": "Something went wrong",
+          "description": "We couldn't load this profile. Please try again."
+        },
+
+        "tabs": {
+          "skills": "Skills",
+          "reviews": "Reviews",
+          "content": "Content",
+          "history": "History"
+        },
+
+        "comingSoon": {
+          "reviews": "Reviews are coming soon.",
+          "content": "Content is coming soon.",
+          "history": "History is coming soon."
+        },
+
+        "skillsLabel": "Skills",
+        "skillsTitle": "Skills & learning direction",
+        "skillsDescription": "The skills you can teach and the direction you're learning.",
+        "skillsHaveDescription": "Skills you already have on your profile.",
+        "skillsIHave": "Skills I have",
+        "skillIWantToLearn": "Skill I want to learn",
+        "noSkills": "No skills added yet.",
+        "noSkillsFound": "No skills found.",
+        "noLearningDirection": "No learning direction selected yet.",
+        "editSkills": "Edit skills",
+        "searchSkills": "Search skills",
+        "chooseDirectionFirst": "Choose a learning direction first.",
+        "learningDirectionDescription": "Pick the direction you want to learn, then choose the skills you already have.",
+        "selectLearningDirection": "Select a learning direction",
+        "saving": "Saving…",
+        "saveChanges": "Save changes",
+
+        "form": {
+          "firstName": "First name",
+          "lastName": "Last name",
+          "bio": "Bio",
+          "university": "University"
+        },
+
+        "experiences": {
+          "title": "Experience",
+          "subtitle": "Roles and highlights on your profile",
+          "untitled": "Untitled experience",
+          "empty": "No experiences yet.",
+          "loadError": "Failed to load experiences.",
+          "add": "Add experience",
+          "edit": "Edit",
+          "delete": "Delete",
+          "addTitle": "Add experience",
+          "editTitle": "Edit experience",
+          "deleteConfirm": "Delete this experience?",
+          "form": {
+            "title": "Title",
+            "titlePlaceholder": "e.g. Frontend Intern at Company",
+            "description": "Description",
+            "descriptionPlaceholder": "What did you work on?"
+          }
+        },
+        "progress": {
+          "title": "Learning progress",
+          "subtitle": "Directions you are actively learning",
+          "fallbackDirection": "Learning direction",
+          "started": "Started {{date}}",
+          "inProgress": "In progress",
+          "empty": "No progress records yet.",
+          "loadError": "Failed to load progress."
+        },
+        "sessions": {
+          "title": "Learning sessions",
+          "subtitle": "Scheduled and active exchanges",
+          "untitled": "Untitled session",
+          "scheduled": "Scheduled",
+          "openMeeting": "Open meeting link →",
+          "empty": "No sessions yet.",
+          "loadError": "Failed to load sessions."
+        },
+        "content": {
+          "title": "Published content",
+          "subtitle": "Guides and posts you have shared",
+          "fallbackType": "Content",
+          "untitled": "Untitled",
+          "open": "Open →",
+          "empty": "No published content yet.",
+          "loadError": "Failed to load published content.",
+          "add": "Add content",
+          "edit": "Edit",
+          "delete": "Delete",
+          "addTitle": "Add content",
+          "editTitle": "Edit content",
+          "deleteConfirm": "Delete this content?",
+          "form": {
+            "title": "Title",
+            "titlePlaceholder": "e.g. Intro to React hooks",
+            "description": "Description",
+            "descriptionPlaceholder": "What is this about?",
+            "contentType": "Type",
+            "contentTypePlaceholder": "Select a type",
+            "contentUrl": "URL",
+            "contentUrlPlaceholder": "https://..."
+          },
+          "types": {
+            "Text": "Text",
+            "Image": "Image",
+            "Video": "Video",
+            "File": "File",
+            "ExternalLink": "External link"
+          },
+        },
+        "reviews": {
+          "label": "Reviews",
+          "title": "Reviews received",
+          "subtitle": "Feedback from peers after learning sessions",
+          "empty": "No reviews yet.",
+          "loadError": "Failed to load reviews."
+        },
+      },
+
+      contentDetail: {
+        back: "Back to profile",
+        loadError: "Could not load this post.",
+        like: "Like",
+        save: "Save",
+        repost: "Repost",
+        share: "Share",
+        comments: "Comments",
+        commentPlaceholder: "Write a comment…",
+        postComment: "Post",
+        noComments: "No comments yet.",
+        editPost: "Edit post",
+        deletePost: "Delete",
+        deletePostConfirm: "Delete this post permanently?",
+        editComment: "Edit comment",
+        deleteComment: "Delete comment",
+        deleteCommentConfirm: "Delete this comment?",
+      },
+
       seo: {
         login: {
           title: "Log In | Riwaq",
@@ -332,6 +486,22 @@ const resources = {
         leaderboard: {
           title: "Leaderboard | Riwaq",
           description: "See the Riwaq community leaderboard and explore member contributions.",
+        },
+                profile: {
+          title: "Profile | Riwaq",
+          description:
+            "View and manage your Riwaq profile, skills, content, and learning progress.",
+        },
+
+        contentDetail: {
+          title: "Post | Riwaq",
+          description:
+            "Read this knowledge post, engage with likes and comments, and share with peers on Riwaq.",
+        },
+
+        notFound: {
+          title: "Page not found | Riwaq",
+          description: "The page you are looking for does not exist on Riwaq.",
         },
       },
     },
@@ -406,6 +576,7 @@ const resources = {
           fullName: "تسنيم جرار",
           firstName: "الاسم الأول",
           lastName: "اسم العائلة",
+          loadingLearningDirections: "جاري تحميل مسارات التعلم…",
         },
 
         accessibility: {
@@ -626,6 +797,159 @@ const resources = {
         },
       },
 
+      "profile": {
+        "unknownUser": "مستخدم بلا اسم",
+        "verified": "موثّق",
+        "edit": "تعديل",
+        "editLabel": "الملف الشخصي",
+        "editProfile": "تعديل الملف الشخصي",
+        "aboutTitle": "نبذة",
+        "noBio": "لا توجد نبذة مضافة بعد.",
+        "university": "الجامعة",
+        "points": "النقاط",
+        "skillsCount": "المهارات",
+        "learningDirection": "مسار التعلم",
+        "notSet": "غير محدد",
+
+        "error": {
+          "title": "حدث خطأ ما",
+          "description": "تعذّر تحميل هذا الملف الشخصي. حاول مرة أخرى."
+        },
+
+        "tabs": {
+          "skills": "المهارات",
+          "reviews": "التقييمات",
+          "content": "المحتوى",
+          "history": "السجل"
+        },
+
+        "comingSoon": {
+          "reviews": "قسم التقييمات قادم قريبًا.",
+          "content": "قسم المحتوى قادم قريبًا.",
+          "history": "قسم السجل قادم قريبًا."
+        },
+
+        "skillsLabel": "المهارات",
+        "skillsTitle": "المهارات ومسار التعلم",
+        "skillsDescription": "المهارات التي يمكنك تعليمها والمسار الذي تتعلمه حاليًا.",
+        "skillsHaveDescription": "المهارات المضافة بالفعل إلى ملفك الشخصي.",
+        "skillsIHave": "مهاراتي",
+        "skillIWantToLearn": "المهارة التي أريد تعلمها",
+        "noSkills": "لا توجد مهارات مضافة بعد.",
+        "noSkillsFound": "لم يتم العثور على مهارات.",
+        "noLearningDirection": "لم يتم اختيار مسار تعلم بعد.",
+        "editSkills": "تعديل المهارات",
+        "searchSkills": "ابحث عن المهارات",
+        "chooseDirectionFirst": "اختر مسار التعلم أولًا.",
+        "learningDirectionDescription": "اختر المسار الذي تريد تعلمه، ثم حدد المهارات التي تمتلكها بالفعل.",
+        "selectLearningDirection": "اختر مسار التعلم",
+        "saving": "جاري الحفظ…",
+        "saveChanges": "حفظ التغييرات",
+
+        "form": {
+          "firstName": "الاسم الأول",
+          "lastName": "اسم العائلة",
+          "bio": "نبذة",
+          "university": "الجامعة"
+        },
+
+        "progress": {
+          "title": "تقدم التعلم",
+          "subtitle": "المسارات التي تتعلمها حالياً",
+          "fallbackDirection": "مسار تعليمي",
+          "started": "بدأ في {{date}}",
+          "inProgress": "قيد التقدم",
+          "empty": "لا توجد سجلات تقدم بعد.",
+          "loadError": "تعذّر تحميل التقدم."
+        },
+        "sessions": {
+          "title": "جلسات التعلم",
+          "subtitle": "التبادلات المجدولة والنشطة",
+          "untitled": "جلسة بدون عنوان",
+          "scheduled": "مجدولة",
+          "openMeeting": "فتح رابط الاجتماع ←",
+          "empty": "لا توجد جلسات بعد.",
+          "loadError": "تعذّر تحميل الجلسات."
+        },
+        "content": {
+          "title": "المحتوى المنشور",
+          "subtitle": "الأدلة والمنشورات التي شاركتها",
+          "fallbackType": "محتوى",
+          "untitled": "بدون عنوان",
+          "open": "فتح ←",
+          "empty": "لا يوجد محتوى منشور بعد.",
+          "loadError": "تعذّر تحميل المحتوى المنشور.",
+          "add": "إضافة محتوى",
+          "edit": "تعديل",
+          "delete": "حذف",
+          "addTitle": "إضافة محتوى",
+          "editTitle": "تعديل المحتوى",
+          "deleteConfirm": "هل تريد حذف هذا المحتوى؟",
+          "form": {
+            "title": "العنوان",
+            "titlePlaceholder": "مثال: مقدمة في React hooks",
+            "description": "الوصف",
+            "descriptionPlaceholder": "ما موضوع هذا المحتوى؟",
+            "contentType": "النوع",
+            "contentTypePlaceholder": "اختر النوع",
+            "contentUrl": "الرابط",
+            "contentUrlPlaceholder": "https://..."
+          },
+          "types": {
+            "Text": "نص",
+            "Image": "صورة",
+            "Video": "فيديو",
+            "File": "ملف",
+            "ExternalLink": "رابط خارجي"
+          },
+        },
+        "reviews": {
+          "label": "التقييمات",
+          "title": "التقييمات المستلمة",
+          "subtitle": "ملاحظات الأقران بعد جلسات التعلم",
+          "empty": "لا توجد تقييمات بعد.",
+          "loadError": "تعذّر تحميل التقييمات."
+        },
+        "experiences": {
+          "title": "الخبرة",
+          "subtitle": "الأدوار والإنجازات في ملفك الشخصي",
+          "untitled": "خبرة بدون عنوان",
+          "empty": "لا توجد خبرات بعد.",
+          "loadError": "تعذّر تحميل الخبرات.",
+          "add": "إضافة خبرة",
+          "edit": "تعديل",
+          "delete": "حذف",
+          "addTitle": "إضافة خبرة",
+          "editTitle": "تعديل الخبرة",
+          "deleteConfirm": "هل تريد حذف هذه الخبرة؟",
+          "form": {
+            "title": "العنوان",
+            "titlePlaceholder": "مثال: متدرب واجهات أمامية",
+            "description": "الوصف",
+            "descriptionPlaceholder": "ماذا عملت؟"
+          }
+        },
+      },
+
+      contentDetail: {
+        back: "العودة إلى الملف",
+        loadError: "تعذّر تحميل هذا المنشور.",
+        like: "إعجاب",
+        save: "حفظ",
+        repost: "إعادة نشر",
+        share: "مشاركة",
+        comments: "التعليقات",
+        commentPlaceholder: "اكتب تعليقاً…",
+        postComment: "نشر",
+        noComments: "لا توجد تعليقات بعد.",
+        editPost: "تعديل المنشور",
+        deletePost: "حذف",
+        deletePostConfirm: "هل تريد حذف هذا المنشور نهائياً؟",
+        editComment: "تعديل التعليق",
+        deleteComment: "حذف التعليق",
+        deleteCommentConfirm: "هل تريد حذف هذا التعليق؟",
+      },
+
       seo: {
         login: {
           title: "تسجيل الدخول | رِواق",
@@ -665,6 +989,22 @@ const resources = {
         leaderboard: {
           title: "قائمة المتصدرين | رِواق",
           description: "استعرض قائمة المتصدرين في مجتمع رِواق واكتشف مساهمات الأعضاء.",
+        },
+                profile: {
+          title: "الملف الشخصي | رِواق",
+          description:
+            "اعرض وأدر ملفك الشخصي على رِواق، بما في ذلك المهارات والمحتوى وتقدم التعلم.",
+        },
+
+        contentDetail: {
+          title: "منشور | رِواق",
+          description:
+            "اقرأ هذا المنشور المعرفي، تفاعل بالإعجابات والتعليقات، وشاركه مع الأقران على رِواق.",
+        },
+
+        notFound: {
+          title: "الصفحة غير موجودة | رِواق",
+          description: "الصفحة التي تبحث عنها غير موجودة على رِواق.",
         },
       },
     },
