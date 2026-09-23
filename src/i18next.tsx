@@ -73,6 +73,7 @@ const resources = {
           fullName: "Tasneem Jarrar",
           firstName: "First name",
           lastName: "Last name",
+          loadingLearningDirections: "Loading learning directions…",
         },
 
         accessibility: {
@@ -293,6 +294,98 @@ const resources = {
         },
       },
 
+      "profile": {
+        "unknownUser": "Unnamed user",
+        "verified": "Verified",
+        "edit": "Edit",
+        "editLabel": "Profile",
+        "editProfile": "Edit profile",
+        "aboutTitle": "About",
+        "noBio": "No bio added yet.",
+        "university": "University",
+        "points": "Points",
+        "skillsCount": "Skills",
+        "learningDirection": "Learning direction",
+        "notSet": "Not set",
+
+        "error": {
+          "title": "Something went wrong",
+          "description": "We couldn't load this profile. Please try again."
+        },
+
+        "tabs": {
+          "skills": "Skills",
+          "reviews": "Reviews",
+          "content": "Content",
+          "history": "History"
+        },
+
+        "comingSoon": {
+          "reviews": "Reviews are coming soon.",
+          "content": "Content is coming soon.",
+          "history": "History is coming soon."
+        },
+
+        "skillsLabel": "Skills",
+        "skillsTitle": "Skills & learning direction",
+        "skillsDescription": "The skills you can teach and the direction you're learning.",
+        "skillsHaveDescription": "Skills you already have on your profile.",
+        "skillsIHave": "Skills I have",
+        "skillIWantToLearn": "Skill I want to learn",
+        "noSkills": "No skills added yet.",
+        "noSkillsFound": "No skills found.",
+        "noLearningDirection": "No learning direction selected yet.",
+        "editSkills": "Edit skills",
+        "searchSkills": "Search skills",
+        "chooseDirectionFirst": "Choose a learning direction first.",
+        "learningDirectionDescription": "Pick the direction you want to learn, then choose the skills you already have.",
+        "selectLearningDirection": "Select a learning direction",
+        "saving": "Saving…",
+        "saveChanges": "Save changes",
+
+        "form": {
+          "firstName": "First name",
+          "lastName": "Last name",
+          "bio": "Bio",
+          "university": "University"
+        },
+
+        "experiences": {
+          "title": "Experience",
+          "subtitle": "Roles and highlights on your profile",
+          "untitled": "Untitled experience",
+          "empty": "No experiences yet.",
+          "loadError": "Failed to load experiences."
+        },
+        "progress": {
+          "title": "Learning progress",
+          "subtitle": "Directions you are actively learning",
+          "fallbackDirection": "Learning direction",
+          "started": "Started {{date}}",
+          "inProgress": "In progress",
+          "empty": "No progress records yet.",
+          "loadError": "Failed to load progress."
+        },
+        "sessions": {
+          "title": "Learning sessions",
+          "subtitle": "Scheduled and active exchanges",
+          "untitled": "Untitled session",
+          "scheduled": "Scheduled",
+          "openMeeting": "Open meeting link →",
+          "empty": "No sessions yet.",
+          "loadError": "Failed to load sessions."
+        },
+        "content": {
+          "title": "Published content",
+          "subtitle": "Guides and posts you have shared",
+          "fallbackType": "Content",
+          "untitled": "Untitled",
+          "open": "Open →",
+          "empty": "No published content yet.",
+          "loadError": "Failed to load published content."
+        }
+      },
+
       seo: {
         login: {
           title: "Log In | Riwaq",
@@ -406,6 +499,7 @@ const resources = {
           fullName: "تسنيم جرار",
           firstName: "الاسم الأول",
           lastName: "اسم العائلة",
+          loadingLearningDirections: "جاري تحميل مسارات التعلم…",
         },
 
         accessibility: {
@@ -624,6 +718,98 @@ const resources = {
           trustScore: "درجة الثقة: {{percent}}%",
           trustSubtitle: "ضمن أفضل {{percent}}% من رضا المتعلمين",
         },
+      },
+
+      "profile": {
+        "unknownUser": "مستخدم بلا اسم",
+        "verified": "موثّق",
+        "edit": "تعديل",
+        "editLabel": "الملف الشخصي",
+        "editProfile": "تعديل الملف الشخصي",
+        "aboutTitle": "نبذة",
+        "noBio": "لا توجد نبذة مضافة بعد.",
+        "university": "الجامعة",
+        "points": "النقاط",
+        "skillsCount": "المهارات",
+        "learningDirection": "مسار التعلم",
+        "notSet": "غير محدد",
+
+        "error": {
+          "title": "حدث خطأ ما",
+          "description": "تعذّر تحميل هذا الملف الشخصي. حاول مرة أخرى."
+        },
+
+        "tabs": {
+          "skills": "المهارات",
+          "reviews": "التقييمات",
+          "content": "المحتوى",
+          "history": "السجل"
+        },
+
+        "comingSoon": {
+          "reviews": "قسم التقييمات قادم قريبًا.",
+          "content": "قسم المحتوى قادم قريبًا.",
+          "history": "قسم السجل قادم قريبًا."
+        },
+
+        "skillsLabel": "المهارات",
+        "skillsTitle": "المهارات ومسار التعلم",
+        "skillsDescription": "المهارات التي يمكنك تعليمها والمسار الذي تتعلمه حاليًا.",
+        "skillsHaveDescription": "المهارات المضافة بالفعل إلى ملفك الشخصي.",
+        "skillsIHave": "مهاراتي",
+        "skillIWantToLearn": "المهارة التي أريد تعلمها",
+        "noSkills": "لا توجد مهارات مضافة بعد.",
+        "noSkillsFound": "لم يتم العثور على مهارات.",
+        "noLearningDirection": "لم يتم اختيار مسار تعلم بعد.",
+        "editSkills": "تعديل المهارات",
+        "searchSkills": "ابحث عن المهارات",
+        "chooseDirectionFirst": "اختر مسار التعلم أولًا.",
+        "learningDirectionDescription": "اختر المسار الذي تريد تعلمه، ثم حدد المهارات التي تمتلكها بالفعل.",
+        "selectLearningDirection": "اختر مسار التعلم",
+        "saving": "جاري الحفظ…",
+        "saveChanges": "حفظ التغييرات",
+
+        "form": {
+          "firstName": "الاسم الأول",
+          "lastName": "اسم العائلة",
+          "bio": "نبذة",
+          "university": "الجامعة"
+        },
+
+        "experiences": {
+          "title": "الخبرة",
+          "subtitle": "الأدوار والإنجازات في ملفك الشخصي",
+          "untitled": "خبرة بدون عنوان",
+          "empty": "لا توجد خبرات بعد.",
+          "loadError": "تعذّر تحميل الخبرات."
+        },
+        "progress": {
+          "title": "تقدم التعلم",
+          "subtitle": "المسارات التي تتعلمها حالياً",
+          "fallbackDirection": "مسار تعليمي",
+          "started": "بدأ في {{date}}",
+          "inProgress": "قيد التقدم",
+          "empty": "لا توجد سجلات تقدم بعد.",
+          "loadError": "تعذّر تحميل التقدم."
+        },
+        "sessions": {
+          "title": "جلسات التعلم",
+          "subtitle": "التبادلات المجدولة والنشطة",
+          "untitled": "جلسة بدون عنوان",
+          "scheduled": "مجدولة",
+          "openMeeting": "فتح رابط الاجتماع ←",
+          "empty": "لا توجد جلسات بعد.",
+          "loadError": "تعذّر تحميل الجلسات."
+        },
+        "content": {
+          "title": "المحتوى المنشور",
+          "subtitle": "الأدلة والمنشورات التي شاركتها",
+          "fallbackType": "محتوى",
+          "untitled": "بدون عنوان",
+          "open": "فتح ←",
+          "empty": "لا يوجد محتوى منشور بعد.",
+          "loadError": "تعذّر تحميل المحتوى المنشور."
+        }
       },
 
       seo: {
