@@ -12,7 +12,7 @@ import {
   ProficiencyModal,
   type Proficiency,
 } from "./ProficiencyModal";
-import type { Skill } from "../../data/mockSkills";
+import type { Skill } from "../../../api/learningDirections";
 
 export interface SelectedTeachSkill {
   skill: Skill;
@@ -27,6 +27,7 @@ export interface SelectedLearnSkill {
 interface SkillSelectorCardProps {
   mode: "teach" | "learn";
   skills: Skill[];
+  isLoading?: boolean;
   selectedTeachSkills?: SelectedTeachSkill[];
   selectedLearnSkills?: SelectedLearnSkill[];
   onTeachChange?: (skills: SelectedTeachSkill[]) => void;
@@ -36,13 +37,13 @@ interface SkillSelectorCardProps {
 export function SkillSelectorCard({
   mode,
   skills,
+  isLoading = false,
   selectedTeachSkills = [],
   selectedLearnSkills = [],
   onTeachChange,
   onLearnChange,
 }: SkillSelectorCardProps) {
   const { t } = useTranslation();
-
   const [search, setSearch] = useState("");
   const [pendingSkill, setPendingSkill] = useState<Skill | null>(null);
 
@@ -53,11 +54,10 @@ export function SkillSelectorCard({
     : selectedLearnSkills.map((item) => item.skill.id);
 
   const filteredSkills = useMemo(() => {
+    const q = search.trim().toLowerCase();
     return skills.filter((skill) => {
-      const matchesSearch = skill.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
+      const name = skill.name?.toLowerCase() ?? "";
+      const matchesSearch = !q || name.includes(q);
       return matchesSearch && !selectedIds.includes(skill.id);
     });
   }, [skills, search, selectedIds]);
@@ -76,21 +76,15 @@ export function SkillSelectorCard({
 
   const handleProficiencySelect = (proficiency: Proficiency) => {
     if (!pendingSkill) return;
-
     const exists = selectedTeachSkills.some(
       (item) => item.skill.id === pendingSkill.id
     );
-
     if (!exists) {
       onTeachChange?.([
         ...selectedTeachSkills,
-        {
-          skill: pendingSkill,
-          proficiency,
-        },
+        { skill: pendingSkill, proficiency },
       ]);
     }
-
     setPendingSkill(null);
     setSearch("");
   };
@@ -98,19 +92,15 @@ export function SkillSelectorCard({
   const addLearnSkill = (skill: Skill) => {
     onLearnChange?.([
       ...selectedLearnSkills,
-      {
-        skill,
-        priority: "secondary",
-      },
+      { skill, priority: "secondary" },
     ]);
-
     setSearch("");
   };
 
   return (
     <>
       <div className="rounded-3xl border border-border bg-surface-2 p-6 shadow-card sm:p-8">
-        <div className="flex items-centerjustify-between ">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${
@@ -124,8 +114,7 @@ export function SkillSelectorCard({
                 size={20}
               />
             </div>
-
-            <h2 className="text-base sm:text-lg font-bold text-text-primary">
+            <h2 className="text-base font-bold text-text-primary sm:text-lg">
               {t(
                 isTeach
                   ? "onboarding.teach.title"
@@ -133,7 +122,6 @@ export function SkillSelectorCard({
               )}
             </h2>
           </div>
-
           <span className="rounded-full bg-surface-soft px-3 py-1 text-xs font-semibold text-text-secondary">
             {t(
               isTeach
@@ -162,7 +150,6 @@ export function SkillSelectorCard({
             size={16}
             className="absolute start-3.5 top-1/2 -translate-y-1/2 text-text-tertiary"
           />
-
           <input
             type="text"
             value={search}
@@ -172,7 +159,7 @@ export function SkillSelectorCard({
                 ? "onboarding.teach.searchPlaceholder"
                 : "onboarding.learn.searchPlaceholder"
             )}
-            className="w-full rounded-xl border border-input-border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all focus:border-input-focus focus:ring-2 focus:ring-input-focus-soft"
+            className="w-full rounded-xl border border-input-border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary outline-none transition-all placeholder:text-text-tertiary focus:border-input-focus focus:ring-2 focus:ring-input-focus-soft"
           />
         </div>
 
@@ -185,13 +172,12 @@ export function SkillSelectorCard({
                   : "onboarding.learn.targetDisciplines"
               )}
             </p>
-
             <div className="mt-2 flex flex-wrap gap-2">
               {isTeach
                 ? selectedTeachSkills.map((item) => (
                     <SkillChip
                       key={item.skill.id}
-                      name={item.skill.name}
+                      name={item.skill.name ?? ""}
                       proficiency={item.proficiency}
                       onRemove={() => removeSkill(item.skill.id)}
                     />
@@ -199,7 +185,7 @@ export function SkillSelectorCard({
                 : selectedLearnSkills.map((item) => (
                     <SkillChip
                       key={item.skill.id}
-                      name={item.skill.name}
+                      name={item.skill.name ?? ""}
                       onRemove={() => removeSkill(item.skill.id)}
                     />
                   ))}
@@ -216,33 +202,40 @@ export function SkillSelectorCard({
         </p>
 
         <div className="mt-2 flex flex-wrap gap-2">
-          {filteredSkills.map((skill) => (
-            <button
-              key={skill.id}
-              type="button"
-              onClick={() =>
-                isTeach
-                  ? setPendingSkill(skill)
-                  : addLearnSkill(skill)
-              }
-              className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:border-primary hover:text-primary-text"
-            >
-              <HugeiconsIcon icon={Add01Icon} size={12} />
-              {skill.name}
-            </button>
-          ))}
-
-          {filteredSkills.length === 0 && (
+          {isLoading ? (
             <p className="text-xs text-text-tertiary">
-              {t("onboarding.noSkillsFound")}
+              {t("onboarding.learningMethod.loading")}
             </p>
+          ) : (
+            <>
+              {filteredSkills.map((skill) => (
+                <button
+                  key={skill.id}
+                  type="button"
+                  onClick={() =>
+                    isTeach
+                      ? setPendingSkill(skill)
+                      : addLearnSkill(skill)
+                  }
+                  className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:border-primary hover:text-primary-text"
+                >
+                  <HugeiconsIcon icon={Add01Icon} size={12} />
+                  {skill.name}
+                </button>
+              ))}
+              {filteredSkills.length === 0 && (
+                <p className="text-xs text-text-tertiary">
+                  {t("onboarding.noSkillsFound")}
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>
 
       {pendingSkill && (
         <ProficiencyModal
-          skillName={pendingSkill.name}
+          skillName={pendingSkill.name ?? ""}
           onSelect={handleProficiencySelect}
           onClose={() => setPendingSkill(null)}
         />
