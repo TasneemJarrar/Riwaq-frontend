@@ -7,8 +7,8 @@ import {
   RefreshIcon,
 } from "@hugeicons/core-free-icons";
 
-import { usePointsTransactions } from "../../hooks/usePoints";
-import type { ActivityType } from "../../api/types/points";
+import { usePointsTransactions } from "../../../hooks/usePoints";
+import type { ActivityType } from "../../../api/points";
 
 type ActivityFilter = "all" | "earned" | "spent";
 

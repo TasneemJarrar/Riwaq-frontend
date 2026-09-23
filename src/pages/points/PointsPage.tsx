@@ -1,7 +1,7 @@
-import ActivitySection from "../../components/points/ActivitySection";
-import EarnPointsSection from "../../components/points/EarnPointsSection";
-import ExchangeSection from "../../components/points/ExchangeSection";
-import PointsOverview from "../../components/points/PointsOverview";
+import ActivitySection from "./components/ActivitySection";
+import EarnPointsSection from "./components/EarnPointsSection";
+import ExchangeSection from "./components/ExchangeSection";
+import PointsOverview from "./components/PointsOverview";
 
 export default function PointsPage() {
   return (
