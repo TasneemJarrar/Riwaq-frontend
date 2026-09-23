@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getLearningDirections,
   getLearningDirection,
+  getSkills,
   selectLearningDirection,
 } from "../api/learningDirections";
 import { profileKeys } from "./useProfile";
@@ -17,6 +18,13 @@ export const useLearningDirection = (id: string | null) =>
     queryKey: ["learning-direction", id],
     queryFn: () => getLearningDirection(id!),
     enabled: !!id,
+  });
+
+export const useSkills = () =>
+  useQuery({
+    queryKey: ["skills"],
+    queryFn: getSkills,
+    staleTime: 5 * 60_000,
   });
 
 export function useUpdateLearningDirection() {
