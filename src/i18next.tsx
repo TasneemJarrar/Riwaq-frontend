@@ -497,6 +497,30 @@ const resources = {
         },
       },
 
+      discover: {
+        badge: "AI Skill Match Engine",
+        title: "Peer Directory & Mutual Exchange",
+        subtitle:
+          "Algorithmic bi-directional match matrix. Pair with peers seeking the capabilities you teach.",
+        balance: "Points balance",
+        refill: "Refill Quota",
+        searchPlaceholder: "Search by skill (e.g. Python, Figma) or mentor name...",
+        filters: {
+          all: "All Mentors",
+          shared: "Looking for My Skills",
+          match: "Best AI Match",
+        },
+        teaches: "Teaches",
+        seeks: "Seeks",
+        match: "{{percent}}% AI Match",
+        consumesRequest: "Uses 1 connection request",
+        sendRequest: "Send Connection Request",
+        requestSent: "Request sent",
+        empty: "No mentors found. Try another search or filter.",
+        footer:
+          "Peer reciprocity: connect to teach and learn — no cash transactions.",
+      },
+
       seo: {
         login: {
           title: "Log In | Riwaq",
@@ -1043,13 +1067,36 @@ const resources = {
           activeSwaps: "{{count}} تبادل نشط",
         },
         swap: {
-  empty: "لا توجد طلبات تبادل حالياً.",
-  wantsToConnect: "يريد التواصل / تبادل المهارات معك.",
-  accept: "قبول",
-  decline: "رفض",
-},
+          empty: "لا توجد طلبات تبادل حالياً.",
+          wantsToConnect: "يريد التواصل / تبادل المهارات معك.",
+          accept: "قبول",
+          decline: "رفض",
+        },
       },
 
+      discover: {
+        badge: "محرك مطابقة المهارات",
+        title: "دليل الأقران والتبادل المتبادل",
+        subtitle:
+          "مصفوفة مطابقة ثنائية الاتجاه. تواصل مع أقران يبحثون عن ما تستطيع تعليمه.",
+        balance: "رصيد النقاط",
+        refill: "تعبئة الحصة",
+        searchPlaceholder: "ابحث بالمهارة أو اسم المرشد...",
+        filters: {
+          all: "كل المرشدين",
+          shared: "يبحثون عن مهاراتي",
+          match: "أفضل مطابقة",
+        },
+        teaches: "يعلّم",
+        seeks: "يبحث عن",
+        match: "مطابقة {{percent}}%",
+        consumesRequest: "يستخدم طلب تواصل واحد",
+        sendRequest: "إرسال طلب تواصل",
+        requestSent: "تم إرسال الطلب",
+        empty: "لا يوجد مرشدون. جرّب بحثاً أو فلترًا آخر.",
+        footer: "تبادل متكافئ: علّم وتعلّم — بدون معاملات نقدية.",
+      },
+      
       seo: {
         login: {
           title: "تسجيل الدخول | رِواق",
