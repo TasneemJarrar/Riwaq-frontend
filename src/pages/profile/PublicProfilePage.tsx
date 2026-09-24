@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
@@ -10,16 +9,18 @@ import {
 } from "@hugeicons/core-free-icons";
 import { usePublicProfile, useUserRatings } from "../../hooks/useProfile";
 import { useAuthStore } from "../../store/useAuthStore";
-import { connectionsApi } from "../../api/connections";
-import { connectionKeys } from "../../hooks/useConnections";
+import {
+  useSentConnectionRequests,
+  useAcceptedConnections,
+  useSendConnectionRequest,
+} from "../../hooks/useConnections";
 
 export default function PublicProfilePage() {
   const { userId } = useParams<{ userId: string }>();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const myUserId = useAuthStore((s) => s.user?.userId);
-  const queryClient = useQueryClient();
   const [shared, setShared] = useState(false);
-  const [requestSent, setRequestSent] = useState(false);
 
   const {
     data: profile,
@@ -30,24 +31,41 @@ export default function PublicProfilePage() {
   const { data: ratings = [], isLoading: ratingsLoading } =
     useUserRatings(userId);
 
-  const sendRequest = useMutation({
-    mutationFn: (receiverUserId: string) =>
-      connectionsApi.send(receiverUserId),
-    onSuccess: () => {
-      setRequestSent(true);
-      queryClient.invalidateQueries({ queryKey: connectionKeys.all });
-    },
-  });
+  const { data: sentRequests = [], isLoading: sentLoading } =
+    useSentConnectionRequests();
+  const { data: acceptedConnections = [], isLoading: connectionsLoading } =
+    useAcceptedConnections();
+  const sendRequest = useSendConnectionRequest();
 
+  // Redirect if viewing own profile
   if (myUserId && userId === myUserId) {
     return <Navigate to="/profile" replace />;
   }
 
-  const displayName =
-    profile
-      ? [profile.firstName, profile.lastName].filter(Boolean).join(" ") ||
-        t("profile.unknownUser")
-      : "";
+  // Relationship status
+  const isConnected = acceptedConnections.some(
+    (c) => c.userAId === userId || c.userBId === userId
+  );
+
+  const isPending = sentRequests.some((r) => {
+    const receiverId = r.receiverUserId ?? r.receiver?.userId ?? null;
+    const status = (r.status ?? "").toLowerCase();
+    const isPendingStatus =
+      !status ||
+      status === "pending" ||
+      status === "sent" ||
+      status === "requested" ||
+      status === "open";
+
+    return receiverId === userId && isPendingStatus;
+  });
+
+  const relationshipLoading = sentLoading || connectionsLoading;
+
+  const displayName = profile
+    ? [profile.firstName, profile.lastName].filter(Boolean).join(" ") ||
+      t("profile.unknownUser")
+    : "";
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -59,8 +77,17 @@ export default function PublicProfilePage() {
       }
       setShared(true);
     } catch {
-      // cancelled
+      // user cancelled
     }
+  };
+
+  const handleConnect = () => {
+    if (!userId || isConnected || isPending || sendRequest.isPending) return;
+    sendRequest.mutate(userId);
+  };
+
+  const handleMessage = () => {
+    navigate(`/chat?userId=${userId}`);
   };
 
   if (isLoading) {
@@ -115,6 +142,7 @@ export default function PublicProfilePage() {
         </Link>
 
         <section className="overflow-hidden rounded-3xl border border-border bg-surface-2 shadow-card">
+          {/* Header */}
           <div className="relative bg-gradient-to-br from-primary-soft/40 to-surface-2 px-5 pb-6 pt-8 sm:px-8 sm:pt-10">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex items-end gap-4">
@@ -138,6 +166,7 @@ export default function PublicProfilePage() {
                 </div>
               </div>
 
+              {/* Action buttons */}
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -150,21 +179,48 @@ export default function PublicProfilePage() {
                     : t("feed.post.share")}
                 </button>
 
-                <button
-                  type="button"
-                  disabled={requestSent || sendRequest.isPending || !userId}
-                  onClick={() => userId && sendRequest.mutate(userId)}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-cta hover:bg-primary-hover disabled:opacity-60"
-                >
-                  <HugeiconsIcon icon={UserAdd01Icon} size={16} />
-                  {requestSent
-                    ? `${t("feed.sidebar.requestSwap")} ✓`
-                    : t("feed.sidebar.requestSwap")}
-                </button>
+                {relationshipLoading ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-1 px-4 py-2 text-sm font-semibold text-text-secondary opacity-60"
+                  >
+                    …
+                  </button>
+                ) : isConnected ? (
+                  <button
+                    type="button"
+                    onClick={handleMessage}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-cta hover:bg-primary-hover"
+                  >
+                    Message
+                  </button>
+                ) : isPending ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-1 px-4 py-2 text-sm font-semibold text-text-secondary opacity-80"
+                  >
+                    Pending
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={sendRequest.isPending || !userId}
+                    onClick={handleConnect}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-cta hover:bg-primary-hover disabled:opacity-60"
+                  >
+                    <HugeiconsIcon icon={UserAdd01Icon} size={16} />
+                    {sendRequest.isPending
+                      ? "Sending…"
+                      : t("feed.sidebar.requestSwap")}
+                  </button>
+                )}
               </div>
             </div>
           </div>
 
+          {/* Stats */}
           <div className="grid grid-cols-2 gap-3 border-t border-border px-5 py-4 sm:grid-cols-3 sm:px-8">
             <div className="rounded-2xl bg-surface-soft px-4 py-3 text-center">
               <p className="text-lg font-bold text-gamification-text">
@@ -194,6 +250,7 @@ export default function PublicProfilePage() {
             )}
           </div>
 
+          {/* About */}
           <div className="border-t border-border px-5 py-5 sm:px-8">
             <h2 className="text-sm font-semibold text-text-primary">
               {t("profile.aboutTitle")}
@@ -204,6 +261,7 @@ export default function PublicProfilePage() {
           </div>
         </section>
 
+        {/* Reviews */}
         <section className="mt-6 rounded-3xl border border-border bg-surface-2 p-5 shadow-card sm:p-6">
           <h2 className="text-lg font-bold">{t("profile.tabs.reviews")}</h2>
 

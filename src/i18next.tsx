@@ -590,6 +590,23 @@ const resources = {
           title: "Page not found | Riwaq",
           description: "The page you are looking for does not exist on Riwaq.",
         },
+        register: {
+          title: "Sign Up | Riwaq",
+          description:
+            "Create your Riwaq account and start exchanging skills and knowledge with peers.",
+        },
+
+        chat: {
+          title: "Active Chats | Riwaq",
+          description:
+            "View and manage your active knowledge exchange conversations on Riwaq.",
+        },
+      },
+
+      notFound: {
+        title: "Page Not Found",
+        description: "Sorry, the page you're looking for doesn't exist or may have been moved.",
+        backHome: "Back to Home",
       },
     },
   },
@@ -1179,6 +1196,23 @@ const resources = {
           title: "الصفحة غير موجودة | رِواق",
           description: "الصفحة التي تبحث عنها غير موجودة على رِواق.",
         },
+        register: {
+          title: "إنشاء حساب | رِواق",
+          description:
+            "أنشئ حسابك في رِواق وابدأ بتبادل المهارات والمعرفة مع الأقران.",
+        },
+
+        chat: {
+          title: "المحادثات النشطة | رِواق",
+          description:
+            "استعرض وأدر محادثات تبادل المعرفة النشطة الخاصة بك على رِواق.",
+        },
+      },
+
+      notFound: {
+        title: "الصفحة غير موجودة",
+        description: "عذراً، الصفحة التي تبحث عنها غير موجودة أو ربما تم نقلها.",
+        backHome: "العودة للرئيسية",
       },
     },
   },

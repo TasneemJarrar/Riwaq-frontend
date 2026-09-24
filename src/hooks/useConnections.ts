@@ -10,6 +10,7 @@ export const connectionKeys = {
   all: ["connections"] as const,
   received: () => [...connectionKeys.all, "received"] as const,
   sent: () => [...connectionKeys.all, "sent"] as const,
+  accepted: () => [...connectionKeys.all, "accepted"] as const,
 };
 
 export interface EarnRequestItem {
@@ -116,6 +117,39 @@ export function useUpdateConnectionRequestStatus() {
       id: string;
       status: UpdateConnectionRequestStatusRequest["status"];
     }) => connectionsApi.updateStatus(id, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: connectionKeys.all });
+    },
+  });
+}
+
+export function useSentConnectionRequests() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  return useQuery({
+    queryKey: connectionKeys.sent(),
+    queryFn: connectionsApi.getSent,
+    staleTime: 15_000,
+    enabled: isAuthenticated,
+  });
+}
+
+export function useAcceptedConnections() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  return useQuery({
+    queryKey: connectionKeys.accepted(),
+    queryFn: connectionsApi.getConnections,
+    staleTime: 15_000,
+    enabled: isAuthenticated,
+  });
+}
+
+export function useSendConnectionRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (receiverUserId: string) => connectionsApi.send(receiverUserId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: connectionKeys.all });
     },

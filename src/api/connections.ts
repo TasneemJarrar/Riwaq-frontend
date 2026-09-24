@@ -5,14 +5,24 @@ export interface ConnectionRequestResponse {
   id: string;
   status: string | null;
   createdAt: string;
+  updatedAt?: string;
   sender: PublicUserProfileResponse | null;
   receiver?: PublicUserProfileResponse | null;
   senderUserId?: string | null;
   receiverUserId?: string | null;
 }
 
+export interface ConnectionResponse {
+  id: string;
+  userAId: string;
+  userBId: string;
+  createdAt: string;
+  userA: PublicUserProfileResponse;
+  userB: PublicUserProfileResponse;
+}
+
 export interface UpdateConnectionRequestStatusRequest {
-  status: "Accepted" | "Rejected" | "Pending";
+  status: "Accepted" | "Rejected" | "Cancelled" | "Pending";
 }
 
 export const connectionsApi = {
@@ -48,4 +58,11 @@ export const connectionsApi = {
     );
     return data;
   },
+
+  getConnections: async (): Promise<ConnectionResponse[]> => {
+  const { data } = await authAxiosInstance.get<ConnectionResponse[]>(
+    "/api/connections"
+  );
+  return data;
+},
 };
