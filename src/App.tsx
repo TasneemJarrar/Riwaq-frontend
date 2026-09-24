@@ -9,7 +9,12 @@ import { router } from './Router';
 import { CacheProvider } from '@emotion/react';
 import { cacheRtl, cacheLtr } from './rtlCache';
 import { useAuthTokenSync } from './hooks/useAuthTokenSync';
+import { useNotificationHub } from "./hooks/useNotificationHub";
 
+function NotificationHubListener() {
+  useNotificationHub();
+  return null;
+}
 
 export default function App() {
   useAuthTokenSync();
@@ -37,8 +42,8 @@ export default function App() {
 
   return (
     <CacheProvider value={isRTL ? cacheRtl : cacheLtr}>
-
       <QueryClientProvider client={queryClient}>
+        <NotificationHubListener />
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
