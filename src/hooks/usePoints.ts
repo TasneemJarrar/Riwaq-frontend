@@ -122,7 +122,6 @@ export function usePurchasePoints() {
   });
 }
 
-/** Derived stats from transactions */
 export function usePointsStats() {
   const { data: activities = [], isLoading, isError, error } =
     usePointsTransactions();

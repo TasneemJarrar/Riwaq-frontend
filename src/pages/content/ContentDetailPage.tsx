@@ -11,6 +11,7 @@ import {
   ArrowLeft01Icon,
   Edit02Icon,
   Delete02Icon,
+  Comment01Icon,
 } from "@hugeicons/core-free-icons";
 import { profileApi } from "../../api/profile";
 import type { CommentResponse } from "../../api/profile";
@@ -28,6 +29,15 @@ import ContentModal, {
   type ContentFormState,
 } from "../profile/components/ContentModal";
 
+function isConflictError(err: unknown): boolean {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "response" in err &&
+    (err as { response?: { status?: number } }).response?.status === 409
+  );
+}
+
 export default function ContentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
@@ -41,10 +51,8 @@ export default function ContentDetailPage() {
     refetch: refetchPost,
   } = useEducationalContent(id);
 
-  const {
-    data: comments = [],
-    isLoading: commentsLoading,
-  } = useContentComments(id);
+  const { data: comments = [], isLoading: commentsLoading } =
+    useContentComments(id);
 
   const createComment = useCreateComment(id ?? "");
   const updateComment = useUpdateComment(id ?? "");
@@ -54,7 +62,14 @@ export default function ContentDetailPage() {
 
   const isOwner = !!post && !!myUserId && post.userId === myUserId;
 
+  const authorPath = isOwner
+    ? "/profile"
+    : post
+      ? `/users/${post.userId}`
+      : "/feed";
+
   const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const [saved, setSaved] = useState(false);
   const [reposted, setReposted] = useState(false);
   const [sharedOnce, setSharedOnce] = useState(false);
@@ -77,16 +92,17 @@ export default function ContentDetailPage() {
   const toggleLike = async () => {
     if (!id || busy) return;
     setBusy("like");
+    const next = !liked;
+    setLiked(next);
+    setLikeCount((c) => (next ? c + 1 : Math.max(0, c - 1)));
     try {
-      if (liked) {
-        await profileApi.unlikeContent(id);
-        setLiked(false);
-      } else {
-        await profileApi.likeContent(id);
-        setLiked(true);
+      if (next) await profileApi.likeContent(id);
+      else await profileApi.unlikeContent(id);
+    } catch (err) {
+      if (!isConflictError(err)) {
+        setLiked(!next);
+        setLikeCount((c) => (next ? Math.max(0, c - 1) : c + 1));
       }
-    } catch {
-      // keep previous state
     } finally {
       setBusy(null);
     }
@@ -95,16 +111,13 @@ export default function ContentDetailPage() {
   const toggleSave = async () => {
     if (!id || busy) return;
     setBusy("save");
+    const next = !saved;
+    setSaved(next);
     try {
-      if (saved) {
-        await profileApi.unsaveContent(id);
-        setSaved(false);
-      } else {
-        await profileApi.saveContent(id);
-        setSaved(true);
-      }
-    } catch {
-      // ignore
+      if (next) await profileApi.saveContent(id);
+      else await profileApi.unsaveContent(id);
+    } catch (err) {
+      if (!isConflictError(err)) setSaved(!next);
     } finally {
       setBusy(null);
     }
@@ -113,16 +126,13 @@ export default function ContentDetailPage() {
   const toggleRepost = async () => {
     if (!id || busy) return;
     setBusy("repost");
+    const next = !reposted;
+    setReposted(next);
     try {
-      if (reposted) {
-        await profileApi.unrepostContent(id);
-        setReposted(false);
-      } else {
-        await profileApi.repostContent(id);
-        setReposted(true);
-      }
-    } catch {
-      // ignore
+      if (next) await profileApi.repostContent(id);
+      else await profileApi.unrepostContent(id);
+    } catch (err) {
+      if (!isConflictError(err)) setReposted(!next);
     } finally {
       setBusy(null);
     }
@@ -218,7 +228,7 @@ export default function ContentDetailPage() {
     const ok = window.confirm(t("contentDetail.deletePostConfirm"));
     if (!ok) return;
     await deleteContent.mutateAsync(id);
-    navigate("/profile");
+    navigate("/feed");
   };
 
   if (isLoading) {
@@ -234,7 +244,7 @@ export default function ContentDetailPage() {
       <div className="mx-auto max-w-2xl px-4 py-10 text-center">
         <p className="text-sm text-error">{t("contentDetail.loadError")}</p>
         <Link
-          to="/profile"
+          to="/feed"
           className="mt-4 inline-flex text-sm font-semibold text-primary-text"
         >
           {t("contentDetail.back")}
@@ -248,7 +258,7 @@ export default function ContentDetailPage() {
       <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-4 flex items-center justify-between gap-3">
           <Link
-            to="/profile"
+            to="/feed"
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-text-secondary hover:text-text-primary"
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
@@ -292,6 +302,17 @@ export default function ContentDetailPage() {
               </time>
             </div>
 
+            <div className="mt-3">
+              <Link
+                to={authorPath}
+                className="text-sm font-semibold text-primary-text hover:underline"
+              >
+                {t("feed.post.userFallback", {
+                  id: post.userId.slice(0, 8),
+                })}
+              </Link>
+            </div>
+
             <h1 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">
               {post.title || t("profile.content.untitled")}
             </h1>
@@ -314,6 +335,7 @@ export default function ContentDetailPage() {
             )}
           </div>
 
+          {/* Actions + counts */}
           <div className="grid grid-cols-4 border-t border-border">
             <button
               type="button"
@@ -324,19 +346,32 @@ export default function ContentDetailPage() {
               }`}
             >
               <HugeiconsIcon icon={FavouriteIcon} size={20} />
-              {t("contentDetail.like")}
+              <span className="flex items-center gap-1">
+                {t("contentDetail.like")}
+                {likeCount > 0 && (
+                  <span className="text-[11px] opacity-80">{likeCount}</span>
+                )}
+              </span>
             </button>
 
             <button
               type="button"
-              onClick={toggleSave}
-              disabled={busy === "save"}
-              className={`flex flex-col items-center gap-1 py-3 text-xs font-semibold transition hover:bg-surface-soft ${
-                saved ? "text-primary-text" : "text-text-secondary"
-              }`}
+              onClick={() => {
+                document
+                  .getElementById("comments-section")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="flex flex-col items-center gap-1 py-3 text-xs font-semibold text-text-secondary transition hover:bg-surface-soft"
             >
-              <HugeiconsIcon icon={Bookmark02Icon} size={20} />
-              {t("contentDetail.save")}
+              <HugeiconsIcon icon={Comment01Icon} size={20} />
+              <span className="flex items-center gap-1">
+                {t("contentDetail.comments")}
+                {comments.length > 0 && (
+                  <span className="text-[11px] opacity-80">
+                    {comments.length}
+                  </span>
+                )}
+              </span>
             </button>
 
             <button
@@ -353,20 +388,45 @@ export default function ContentDetailPage() {
 
             <button
               type="button"
+              onClick={toggleSave}
+              disabled={busy === "save"}
+              className={`flex flex-col items-center gap-1 py-3 text-xs font-semibold transition hover:bg-surface-soft ${
+                saved ? "text-primary-text" : "text-text-secondary"
+              }`}
+            >
+              <HugeiconsIcon icon={Bookmark02Icon} size={20} />
+              {t("contentDetail.save")}
+            </button>
+          </div>
+
+          {/* Optional 5th row for share if you prefer grid-cols-5 later */}
+          <div className="border-t border-border">
+            <button
+              type="button"
               onClick={handleShare}
               disabled={busy === "share"}
-              className={`flex flex-col items-center gap-1 py-3 text-xs font-semibold transition hover:bg-surface-soft ${
+              className={`flex w-full items-center justify-center gap-2 py-2.5 text-xs font-semibold transition hover:bg-surface-soft ${
                 sharedOnce ? "text-primary-text" : "text-text-secondary"
               }`}
             >
-              <HugeiconsIcon icon={Share08Icon} size={20} />
+              <HugeiconsIcon icon={Share08Icon} size={16} />
               {t("contentDetail.share")}
             </button>
           </div>
         </article>
 
-        <section className="mt-6 rounded-3xl border border-border bg-surface-2 p-5 shadow-card sm:p-6">
-          <h2 className="text-lg font-bold">{t("contentDetail.comments")}</h2>
+        <section
+          id="comments-section"
+          className="mt-6 rounded-3xl border border-border bg-surface-2 p-5 shadow-card sm:p-6"
+        >
+          <h2 className="text-lg font-bold">
+            {t("contentDetail.comments")}
+            {comments.length > 0 && (
+              <span className="ml-2 text-sm font-medium text-text-tertiary">
+                ({comments.length})
+              </span>
+            )}
+          </h2>
 
           <form onSubmit={handleCommentSubmit} className="mt-4 flex gap-2">
             <input
