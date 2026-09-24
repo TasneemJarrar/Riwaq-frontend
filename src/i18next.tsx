@@ -521,6 +521,19 @@ const resources = {
           "Peer reciprocity: connect to teach and learn — no cash transactions.",
       },
 
+      notifications: {
+        title: "Notifications",
+        empty: "No notifications yet.",
+        markAllRead: "Mark all as read",
+        markAsRead: "Mark as read",
+        delete: "Delete notification",
+        unread: "Unread",
+        justNow: "Just now",
+        minutesAgo: "{{count}}m ago",
+        hoursAgo: "{{count}}h ago",
+        daysAgo: "{{count}}d ago",
+      },
+
       seo: {
         login: {
           title: "Log In | Riwaq",
@@ -1096,7 +1109,20 @@ const resources = {
         empty: "لا يوجد مرشدون. جرّب بحثاً أو فلترًا آخر.",
         footer: "تبادل متكافئ: علّم وتعلّم — بدون معاملات نقدية.",
       },
-      
+
+      notifications: {
+        title: "الإشعارات",
+        empty: "لا توجد إشعارات بعد.",
+        markAllRead: "تحديد الكل كمقروء",
+        markAsRead: "تحديد كمقروء",
+        delete: "حذف الإشعار",
+        unread: "غير مقروء",
+        justNow: "الآن",
+        minutesAgo: "منذ {{count}} د",
+        hoursAgo: "منذ {{count}} س",
+        daysAgo: "منذ {{count}} ي",
+      },
+
       seo: {
         login: {
           title: "تسجيل الدخول | رِواق",
