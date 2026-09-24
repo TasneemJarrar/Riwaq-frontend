@@ -5,6 +5,7 @@ import {
   type EarnRequestItem,
   type UpdateConnectionRequestStatusRequest,
 } from "../api/connections";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const connectionKeys = {
   all: ["connections"] as const,
@@ -40,7 +41,6 @@ function displayName(user: ConnectionRequestResponse["sender"]): string {
   return full || "Someone";
 }
 
-/** Map received connection requests → Earn More Points cards */
 export function mapReceivedToEarnRequest(
   req: ConnectionRequestResponse
 ): EarnRequestItem {
@@ -69,10 +69,12 @@ export function mapReceivedToEarnRequest(
 }
 
 export function useReceivedConnectionRequests() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: connectionKeys.received(),
     queryFn: connectionsApi.getReceived,
     staleTime: 30_000,
+    enabled: isAuthenticated,
     select: (data) => {
       const pending = data.filter((r) => {
         const s = (r.status ?? "").toLowerCase();

@@ -6,6 +6,7 @@ import type {
   PointsTransactionResponse,
   PurchasePointsRequest,
 } from "../api/points";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const pointsKeys = {
   all: ["points"] as const,
@@ -69,35 +70,43 @@ export function mapTransactionToActivity(
 }
 
 export function usePointsBalance() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: pointsKeys.balance(),
     queryFn: pointsApi.getBalance,
     staleTime: 30_000,
+    enabled: isAuthenticated,
   });
 }
 
 export function usePointsTransactions() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: pointsKeys.transactions(),
     queryFn: pointsApi.getTransactions,
     staleTime: 30_000,
+    enabled: isAuthenticated,
     select: (data) => data.map(mapTransactionToActivity),
   });
 }
 
 export function usePointsPackages() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: pointsKeys.packages(),
     queryFn: pointsApi.getPackages,
     staleTime: 5 * 60_000,
+    enabled: isAuthenticated,
   });
 }
 
 export function usePointsPurchases() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: pointsKeys.purchases(),
     queryFn: pointsApi.getPurchases,
     staleTime: 60_000,
+    enabled: isAuthenticated,
   });
 }
 
