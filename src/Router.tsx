@@ -13,6 +13,7 @@ import ChatPage from "./pages/chat/ChatPage";
 import GuestRoute from "./routing/GuestRoute";
 import ProtectedRoute from "./routing/ProtectedRoute";
 import ContentDetailPage from "./pages/content/ContentDetailPage";
+import PublicProfilePage from "./pages/profile/PublicProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -47,8 +48,8 @@ export const router = createBrowserRouter([
           { path: "/points", element: <PointsPage />, handle: { seoKey: "points" } },
           { path: "/leaderboard", element: <LeaderboardPage />, handle: { seoKey: "leaderboard" } },
           { path: "/profile", element: <ProfilePage />, handle: { seoKey: "profile" } },
-          { path: "/content/:id", element: <ContentDetailPage />, handle: { seoKey: "contentDetail" } },
-        ],
+          { path: "/users/:userId", element: <PublicProfilePage />, handle: { seoKey: "profile" } },
+          { path: "/content/:id", element: <ContentDetailPage />, handle: { seoKey: "contentDetail" } },],
       },
     ],
   },

@@ -1,40 +1,18 @@
 import authAxiosInstance from "./authAxiosInstance";
-
-/** Connection Requests API types (from OpenAPI) */
-
-export interface PublicUserProfileResponse {
-  userId: string;
-  points: number;
-  learningDirectionId: string | null;
-  learningDirectionName: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  bio: string | null;
-  university: string | null;
-}
+import type { PublicUserProfileResponse } from "./profile";
 
 export interface ConnectionRequestResponse {
   id: string;
-  sender: PublicUserProfileResponse;
-  receiver: PublicUserProfileResponse;
   status: string | null;
   createdAt: string;
-  updatedAt: string;
+  sender: PublicUserProfileResponse | null;
+  receiver?: PublicUserProfileResponse | null;
+  senderUserId?: string | null;
+  receiverUserId?: string | null;
 }
 
 export interface UpdateConnectionRequestStatusRequest {
-  status: string | null; // e.g. "Accepted" | "Rejected" | "Cancelled"
-}
-
-/** UI shape for Earn More Points cards */
-export interface EarnRequestItem {
-  id: string;
-  tag: string;
-  tagClassName: string;
-  title: string;
-  eta: string;
-  status: string | null;
-  senderName: string;
+  status: "Accepted" | "Rejected" | "Pending";
 }
 
 export const connectionsApi = {
@@ -48,6 +26,14 @@ export const connectionsApi = {
   getSent: async (): Promise<ConnectionRequestResponse[]> => {
     const { data } = await authAxiosInstance.get<ConnectionRequestResponse[]>(
       "/api/connection-requests/sent"
+    );
+    return data;
+  },
+
+  send: async (receiverUserId: string): Promise<ConnectionRequestResponse> => {
+    const { data } = await authAxiosInstance.post<ConnectionRequestResponse>(
+      "/api/connection-requests",
+      { receiverUserId }
     );
     return data;
   },

@@ -280,3 +280,23 @@ export function useDeleteComment(contentId: string) {
     },
   });
 }
+
+export function usePublicProfile(userId: string | undefined) {
+  return useQuery({
+    queryKey: [...profileKeys.all, "public", userId ?? ""],
+    queryFn: () => profileApi.getPublic(userId!),
+    enabled: !!userId,
+    staleTime: 60_000,
+  });
+}
+
+export function useAllEducationalContent() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  return useQuery({
+    queryKey: [...profileKeys.content(), "all"],
+    queryFn: profileApi.getEducationalContent,
+    enabled: isAuthenticated,
+    staleTime: 60_000,
+  });
+}

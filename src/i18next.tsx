@@ -429,7 +429,7 @@ const resources = {
       },
 
       contentDetail: {
-        back: "Back to profile",
+        back: "Back to feed",
         loadError: "Could not load this post.",
         like: "Like",
         save: "Save",
@@ -445,6 +445,56 @@ const resources = {
         editComment: "Edit comment",
         deleteComment: "Delete comment",
         deleteCommentConfirm: "Delete this comment?",
+      },
+
+      feed: {
+        composer: {
+          placeholder: "Share a breakthrough, tutorial, or exchange request with your peer network...",
+          codeSnippet: "Code Snippet",
+          resourceLink: "Resource Link",
+          tagSkill: "Tag Skill",
+          publish: "Publish",
+          publishing: "Publishing...",
+        },
+        filters: {
+          curated: "Curated For You",
+          swap: "Peer Swap Requests",
+          sandboxes: "Interactive Sandboxes",
+          trust: "High Trust Nodes",
+        },
+        empty: "No posts yet. Be the first to share something!",
+        post: {
+          untitled: "Untitled",
+          fallbackType: "Post",
+          like: "Like",
+          comment: "Comment",
+          repost: "Repost",
+          save: "Save",
+          share: "Share",
+          recommended: "Recommended for you",
+          recommendedTopic: "Recommended: {{topic}}",
+          userFallback: "User {{id}}",
+        },
+        sidebar: {
+          weeklyGoal: "Weekly Goal",
+          resetsIn: "Resets in 2d 8h",
+          sessionAway: "1 session away",
+          sessionAwayDesc: "Complete your third 1-on-1 swap session to unlock +150 platform points.",
+          suggestedSwaps: "Suggested Swaps",
+          viewAll: "View All",
+          noSuggestions: "No suggestions available yet.",
+          requestSwap: "Request Swap",
+          match: "{{percent}}% Match",
+          activeNodes: "Active Exchange Nodes",
+          live: "Live",
+          activeSwaps: "{{count}} active swaps",
+        },
+        swap: {
+          empty: "No peer swap requests right now.",
+          wantsToConnect: "Wants to connect / swap skills with you.",
+          accept: "Accept",
+          decline: "Decline",
+        },
       },
 
       seo: {
@@ -487,7 +537,7 @@ const resources = {
           title: "Leaderboard | Riwaq",
           description: "See the Riwaq community leaderboard and explore member contributions.",
         },
-                profile: {
+        profile: {
           title: "Profile | Riwaq",
           description:
             "View and manage your Riwaq profile, skills, content, and learning progress.",
@@ -932,7 +982,7 @@ const resources = {
       },
 
       contentDetail: {
-        back: "العودة إلى الملف",
+        back: "العودة إلى الرئيسية",
         loadError: "تعذّر تحميل هذا المنشور.",
         like: "إعجاب",
         save: "حفظ",
@@ -948,6 +998,56 @@ const resources = {
         editComment: "تعديل التعليق",
         deleteComment: "حذف التعليق",
         deleteCommentConfirm: "هل تريد حذف هذا التعليق؟",
+      },
+
+      feed: {
+        composer: {
+          placeholder: "شارك اكتشافًا أو درسًا أو طلب تبادل مع شبكتك...",
+          codeSnippet: "مقطع كود",
+          resourceLink: "رابط مورد",
+          tagSkill: "وسم مهارة",
+          publish: "نشر",
+          publishing: "جاري النشر...",
+        },
+        filters: {
+          curated: "مخصص لك",
+          swap: "طلبات التبادل",
+          sandboxes: "مساحات تفاعلية",
+          trust: "عقد عالية الثقة",
+        },
+        empty: "لا توجد منشورات بعد. كن أول من يشارك!",
+        post: {
+          untitled: "بدون عنوان",
+          fallbackType: "منشور",
+          like: "إعجاب",
+          comment: "تعليق",
+          repost: "إعادة نشر",
+          save: "حفظ",
+          share: "مشاركة",
+          recommended: "موصى به لك",
+          recommendedTopic: "موصى به: {{topic}}",
+          userFallback: "مستخدم {{id}}",
+        },
+        sidebar: {
+          weeklyGoal: "هدف الأسبوع",
+          resetsIn: "يُعاد خلال يومين و8 ساعات",
+          sessionAway: "جلسة واحدة متبقية",
+          sessionAwayDesc: "أكمل جلسة التبادل الثالثة لفتح +150 نقطة.",
+          suggestedSwaps: "تبادلات مقترحة",
+          viewAll: "عرض الكل",
+          noSuggestions: "لا توجد اقتراحات بعد.",
+          requestSwap: "طلب تبادل",
+          match: "تطابق {{percent}}%",
+          activeNodes: "عقد التبادل النشطة",
+          live: "مباشر",
+          activeSwaps: "{{count}} تبادل نشط",
+        },
+        swap: {
+  empty: "لا توجد طلبات تبادل حالياً.",
+  wantsToConnect: "يريد التواصل / تبادل المهارات معك.",
+  accept: "قبول",
+  decline: "رفض",
+},
       },
 
       seo: {
@@ -990,7 +1090,7 @@ const resources = {
           title: "قائمة المتصدرين | رِواق",
           description: "استعرض قائمة المتصدرين في مجتمع رِواق واكتشف مساهمات الأعضاء.",
         },
-                profile: {
+        profile: {
           title: "الملف الشخصي | رِواق",
           description:
             "اعرض وأدر ملفك الشخصي على رِواق، بما في ذلك المهارات والمحتوى وتقدم التعلم.",

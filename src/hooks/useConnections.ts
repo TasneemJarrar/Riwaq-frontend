@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   connectionsApi,
   type ConnectionRequestResponse,
-  type EarnRequestItem,
   type UpdateConnectionRequestStatusRequest,
 } from "../api/connections";
 import { useAuthStore } from "../store/useAuthStore";
@@ -12,6 +11,16 @@ export const connectionKeys = {
   received: () => [...connectionKeys.all, "received"] as const,
   sent: () => [...connectionKeys.all, "sent"] as const,
 };
+
+export interface EarnRequestItem {
+  id: string;
+  tag: string;
+  tagClassName: string;
+  title: string;
+  eta: string;
+  status: string | null;
+  senderName: string;
+}
 
 function formatRelativeDate(iso: string): string {
   const date = new Date(iso);
@@ -34,7 +43,10 @@ function formatRelativeDate(iso: string): string {
   });
 }
 
-function displayName(user: ConnectionRequestResponse["sender"]): string {
+function displayName(
+  user: ConnectionRequestResponse["sender"] | null | undefined
+): string {
+  if (!user) return "Someone";
   const first = user.firstName?.trim() ?? "";
   const last = user.lastName?.trim() ?? "";
   const full = `${first} ${last}`.trim();
@@ -45,7 +57,7 @@ export function mapReceivedToEarnRequest(
   req: ConnectionRequestResponse
 ): EarnRequestItem {
   const name = displayName(req.sender);
-  const direction = req.sender.learningDirectionName?.trim();
+  const direction = req.sender?.learningDirectionName?.trim();
 
   const tag = direction || "Connection";
   const title = direction
@@ -70,12 +82,13 @@ export function mapReceivedToEarnRequest(
 
 export function useReceivedConnectionRequests() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
   return useQuery({
     queryKey: connectionKeys.received(),
     queryFn: connectionsApi.getReceived,
     staleTime: 30_000,
     enabled: isAuthenticated,
-    select: (data) => {
+    select: (data: ConnectionRequestResponse[]) => {
       const pending = data.filter((r) => {
         const s = (r.status ?? "").toLowerCase();
         return (
@@ -96,10 +109,13 @@ export function useUpdateConnectionRequestStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: string }) =>
-      connectionsApi.updateStatus(id, {
-        status,
-      } satisfies UpdateConnectionRequestStatusRequest),
+    mutationFn: ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: UpdateConnectionRequestStatusRequest["status"];
+    }) => connectionsApi.updateStatus(id, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: connectionKeys.all });
     },
