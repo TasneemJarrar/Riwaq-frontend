@@ -66,4 +66,8 @@ export const connectionsApi = {
     );
     return data;
   },
+
+  deleteConnection: async (connectionId: string): Promise<void> => {
+    await authAxiosInstance.delete(`/api/connections/${connectionId}`);
+  },
 };

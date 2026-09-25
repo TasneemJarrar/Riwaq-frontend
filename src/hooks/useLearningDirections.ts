@@ -1,10 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+
 import {
   getLearningDirections,
   getLearningDirection,
   getSkills,
   selectLearningDirection,
 } from "../api/learningDirections";
+
 import { profileKeys } from "./useProfile";
 
 export const useLearningDirections = () =>
@@ -13,7 +19,9 @@ export const useLearningDirections = () =>
     queryFn: getLearningDirections,
   });
 
-export const useLearningDirection = (id: string | null) =>
+export const useLearningDirection = (
+  id: string | null
+) =>
   useQuery({
     queryKey: ["learning-direction", id],
     queryFn: () => getLearningDirection(id!),
@@ -31,9 +39,13 @@ export function useUpdateLearningDirection() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (skillId: string) => selectLearningDirection(skillId),
+    mutationFn: (skillId: string) =>
+      selectLearningDirection(skillId),
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.me() });
+      queryClient.invalidateQueries({
+        queryKey: profileKeys.me(),
+      });
     },
   });
 }

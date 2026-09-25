@@ -1,11 +1,20 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
+  Edit02Icon,
   GraduationCapIcon,
   Mail01Icon,
   ShieldEllipsisIcon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
+import {
+  useMyProfile,
+} from "../../../hooks/useProfile";
+import {
+  useLearningDirections,
+  useUpdateLearningDirection,
+} from "../../../hooks/useLearningDirections";
 
 interface ProfileHeaderProps {
   displayName: string;
@@ -25,6 +34,43 @@ export default function ProfileHeader({
   onEditProfile,
 }: ProfileHeaderProps) {
   const { t } = useTranslation();
+
+  const [isEditingLearningDirection, setIsEditingLearningDirection] =
+    useState(false);
+
+  const { data: profile } = useMyProfile();
+
+  const {
+    data: learningDirections = [],
+    isLoading: learningDirectionsLoading,
+  } = useLearningDirections();
+
+  const {
+    mutateAsync: updateLearningDirection,
+    isPending: isUpdatingLearningDirection,
+  } = useUpdateLearningDirection();
+
+  const learningDirectionId = profile?.learningDirectionId ?? null;
+
+  const currentLearningDirection = learningDirections.find(
+    (direction) => direction.id === learningDirectionId
+  );
+
+  const handleLearningDirectionChange = async (
+    directionId: string
+  ) => {
+    if (!directionId || directionId === learningDirectionId) {
+      setIsEditingLearningDirection(false);
+      return;
+    }
+
+    try {
+      await updateLearningDirection(directionId);
+      setIsEditingLearningDirection(false);
+    } catch (error) {
+      console.error("Failed to update learning direction:", error);
+    }
+  };
 
   return (
     <>
@@ -55,7 +101,10 @@ export default function ProfileHeader({
                 </h1>
 
                 <span className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2.5 py-1 text-[11px] font-semibold text-success-text">
-                  <HugeiconsIcon icon={ShieldEllipsisIcon} size={13} />
+                  <HugeiconsIcon
+                    icon={ShieldEllipsisIcon}
+                    size={13}
+                  />
                   {t("profile.verified")}
                 </span>
               </div>
@@ -69,10 +118,109 @@ export default function ProfileHeader({
 
               {university && (
                 <div className="mt-1.5 flex items-center gap-1.5 text-sm text-text-secondary">
-                  <HugeiconsIcon icon={GraduationCapIcon} size={15} />
+                  <HugeiconsIcon
+                    icon={GraduationCapIcon}
+                    size={15}
+                  />
                   {university}
                 </div>
               )}
+
+              {/* Learning Direction */}
+              <div className="mt-2">
+                {!isEditingLearningDirection ? (
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-text-tertiary">
+                      {t("profile.learningDirection")}:
+                    </span>
+
+                    <span className="font-semibold text-primary-text">
+                      {currentLearningDirection?.name ??
+                        t("profile.notSet")}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsEditingLearningDirection(true)
+                      }
+                      className="inline-flex h-6 w-6 items-center justify-center rounded-full text-text-tertiary transition-colors hover:bg-surface-soft hover:text-primary-text"
+                      aria-label={t(
+                        "profile.editLearningDirection",
+                        {
+                          defaultValue:
+                            "Edit learning direction",
+                        }
+                      )}
+                    >
+                      <HugeiconsIcon
+                        icon={Edit02Icon}
+                        size={14}
+                      />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-text-tertiary">
+                      {t("profile.learningDirection")}:
+                    </span>
+
+                    <select
+                      autoFocus
+                      value={learningDirectionId ?? ""}
+                      onChange={(event) =>
+                        void handleLearningDirectionChange(
+                          event.target.value
+                        )
+                      }
+                      disabled={
+                        learningDirectionsLoading ||
+                        isUpdatingLearningDirection
+                      }
+                      className="max-w-[220px] rounded-xl border border-input-border bg-input-bg px-3 py-1.5 text-sm text-text-primary outline-none transition focus:border-input-focus focus:ring-4 focus:ring-input-focus-soft disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <option value="">
+                        {learningDirectionsLoading
+                          ? t(
+                              "auth.placeholders.loadingLearningDirections"
+                            )
+                          : t(
+                              "profile.selectLearningDirection"
+                            )}
+                      </option>
+
+                      {learningDirections.map((direction) => (
+                        <option
+                          key={direction.id}
+                          value={direction.id}
+                        >
+                          {direction.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    {isUpdatingLearningDirection && (
+                      <span className="text-xs text-text-tertiary">
+                        {t("profile.saving")}
+                      </span>
+                    )}
+
+                    {!isUpdatingLearningDirection && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setIsEditingLearningDirection(false)
+                        }
+                        className="text-xs font-medium text-text-tertiary hover:text-text-primary"
+                      >
+                        {t("common.cancel", {
+                          defaultValue: "Cancel",
+                        })}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

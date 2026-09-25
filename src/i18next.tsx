@@ -307,6 +307,9 @@ const resources = {
         "skillsCount": "Skills",
         "learningDirection": "Learning direction",
         "notSet": "Not set",
+        "connected": "Connected",
+        "removeConnection": "Remove connection",
+        "removingConnection": "Removing…",
 
         "error": {
           "title": "Something went wrong",
@@ -575,6 +578,11 @@ const resources = {
           description: "See the Riwaq community leaderboard and explore member contributions.",
         },
         profile: {
+          title: "Profile | Riwaq",
+          description:
+            "View and manage your Riwaq profile, skills, content, and learning progress.",
+        },
+        publicProfile: {
           title: "Profile | Riwaq",
           description:
             "View and manage your Riwaq profile, skills, content, and learning progress.",
@@ -914,6 +922,9 @@ const resources = {
         "skillsCount": "المهارات",
         "learningDirection": "مسار التعلم",
         "notSet": "غير محدد",
+        "connected": "متصل",
+        "removeConnection": "إزالة الاتصال",
+        "removingConnection": "جارٍ إزالة الاتصال…",
 
         "error": {
           "title": "حدث خطأ ما",
@@ -1181,6 +1192,11 @@ const resources = {
           description: "استعرض قائمة المتصدرين في مجتمع رِواق واكتشف مساهمات الأعضاء.",
         },
         profile: {
+          title: "الملف الشخصي | رِواق",
+          description:
+            "اعرض وأدر ملفك الشخصي على رِواق، بما في ذلك المهارات والمحتوى وتقدم التعلم.",
+        },
+        publicProfile: {
           title: "الملف الشخصي | رِواق",
           description:
             "اعرض وأدر ملفك الشخصي على رِواق، بما في ذلك المهارات والمحتوى وتقدم التعلم.",

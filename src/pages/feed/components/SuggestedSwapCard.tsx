@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { PersonRecommendationItem } from "../../../api/recommendations";
 
 interface Props {
@@ -12,6 +13,7 @@ export default function SuggestedSwapCard({
   isLoading,
 }: Props) {
   const { profile, similarityScore, sharedSkills } = item;
+
   const name =
     [profile.firstName, profile.lastName].filter(Boolean).join(" ") ||
     "Peer";
@@ -21,18 +23,28 @@ export default function SuggestedSwapCard({
   return (
     <div className="rounded-xl border border-border bg-surface-2 p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary-text">
+        {/* Clickable user */}
+        <Link
+          to={`/users/${profile.userId}`}
+          className="flex min-w-0 items-center gap-2.5 rounded-lg transition-opacity hover:opacity-80"
+          aria-label={`View ${name}'s profile`}
+        >
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary-text">
             {name.slice(0, 2).toUpperCase()}
           </div>
-          <div>
-            <p className="text-sm font-semibold text-text-primary">{name}</p>
-            <p className="text-xs text-text-tertiary">
+
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-text-primary">
+              {name}
+            </p>
+
+            <p className="truncate text-xs text-text-tertiary">
               {profile.learningDirectionName || "Member"}
             </p>
           </div>
-        </div>
-        <span className="rounded-full bg-success-soft px-2 py-0.5 text-[11px] font-semibold text-success-text">
+        </Link>
+
+        <span className="shrink-0 rounded-full bg-success-soft px-2 py-0.5 text-[11px] font-semibold text-success-text">
           {matchPercent}% Match
         </span>
       </div>

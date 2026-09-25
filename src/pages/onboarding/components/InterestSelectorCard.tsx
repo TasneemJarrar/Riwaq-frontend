@@ -3,59 +3,64 @@ import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Add01Icon,
-  GraduationScrollIcon,
+  HeartAddIcon,
   SearchIcon,
   Cancel01Icon,
 } from "@hugeicons/core-free-icons";
 
-import type { Skill } from "../../../api/learningDirections";
+import type { InterestResponse } from "../../../api/profile";
 
-interface SkillSelectorCardProps {
-  skills: Skill[];
+interface InterestSelectorCardProps {
+  interests: InterestResponse[];
   isLoading?: boolean;
-  selectedSkills: Skill[];
-  onChange: (skills: Skill[]) => void;
+  selectedInterests: InterestResponse[];
+  onChange: (interests: InterestResponse[]) => void;
 }
 
-export function SkillSelectorCard({
-  skills,
+export function InterestSelectorCard({
+  interests,
   isLoading = false,
-  selectedSkills,
+  selectedInterests,
   onChange,
-}: SkillSelectorCardProps) {
+}: InterestSelectorCardProps) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
 
   const selectedIds = useMemo(
-    () => new Set(selectedSkills.map((skill) => skill.id)),
-    [selectedSkills]
+    () =>
+      new Set(
+        selectedInterests.map((interest) => interest.id)
+      ),
+    [selectedInterests]
   );
 
-  const filteredSkills = useMemo(() => {
+  const filteredInterests = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    return skills.filter((skill) => {
-      const name = skill.name?.toLowerCase() ?? "";
+    return interests.filter((interest) => {
+      const name = interest.name?.toLowerCase() ?? "";
 
       const matchesSearch =
         !query || name.includes(query);
 
-      return matchesSearch && !selectedIds.has(skill.id);
+      return matchesSearch && !selectedIds.has(interest.id);
     });
-  }, [skills, search, selectedIds]);
+  }, [interests, search, selectedIds]);
 
-  const addSkill = (skill: Skill) => {
-    if (selectedIds.has(skill.id)) {
+  const addInterest = (interest: InterestResponse) => {
+    if (selectedIds.has(interest.id)) {
       return;
     }
 
-    onChange([...selectedSkills, skill]);
+    onChange([...selectedInterests, interest]);
     setSearch("");
   };
 
-  const removeSkill = (skillId: string) => {
+  const removeInterest = (interestId: string) => {
     onChange(
-      selectedSkills.filter((skill) => skill.id !== skillId)
+      selectedInterests.filter(
+        (interest) => interest.id !== interestId
+      )
     );
   };
 
@@ -64,58 +69,60 @@ export function SkillSelectorCard({
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-primary-text">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gamification-soft text-gamification-text">
             <HugeiconsIcon
-              icon={GraduationScrollIcon}
+              icon={HeartAddIcon}
               size={20}
             />
           </div>
 
           <div>
             <h2 className="text-base font-bold text-text-primary sm:text-lg">
-              {t("onboarding.skillsStep.title", {
-                defaultValue: "Your skills",
+              {t("onboarding.interests.title", {
+                defaultValue: "Your interests",
               })}
             </h2>
 
             <p className="text-xs text-text-tertiary">
-              {selectedSkills.length} selected
+              {selectedInterests.length} selected
             </p>
           </div>
         </div>
 
         <span className="rounded-full bg-surface-soft px-3 py-1 text-xs font-semibold text-text-secondary">
-          {selectedSkills.length}
+          {selectedInterests.length}
         </span>
       </div>
 
       <p className="mt-3 text-sm leading-6 text-text-secondary">
-        {t("onboarding.skillsStep.description", {
+        {t("onboarding.interests.description", {
           defaultValue:
-            "Choose the topics you already have skills in and can teach others.",
+            "Choose the topics you're interested in exploring or learning more about.",
         })}
       </p>
 
-      {/* Selected skills */}
-      {selectedSkills.length > 0 && (
+      {/* Selected interests */}
+      {selectedInterests.length > 0 && (
         <div className="mt-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">
-            Selected skills
+            Selected interests
           </p>
 
           <div className="mt-2 flex flex-wrap gap-2">
-            {selectedSkills.map((skill) => (
+            {selectedInterests.map((interest) => (
               <div
-                key={skill.id}
-                className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary-text"
+                key={interest.id}
+                className="inline-flex items-center gap-1.5 rounded-full bg-gamification-soft px-3 py-1.5 text-xs font-semibold text-gamification-text"
               >
-                <span>{skill.name}</span>
+                <span>{interest.name}</span>
 
                 <button
                   type="button"
-                  onClick={() => removeSkill(skill.id)}
-                  aria-label={`Remove ${skill.name}`}
-                  className="rounded-full p-0.5 transition-colors hover:bg-primary/10"
+                  onClick={() =>
+                    removeInterest(interest.id)
+                  }
+                  aria-label={`Remove ${interest.name}`}
+                  className="rounded-full p-0.5 transition-colors hover:bg-gamification/10"
                 >
                   <HugeiconsIcon
                     icon={Cancel01Icon}
@@ -139,13 +146,15 @@ export function SkillSelectorCard({
         <input
           type="text"
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search skills..."
+          onChange={(event) =>
+            setSearch(event.target.value)
+          }
+          placeholder="Search interests..."
           className="w-full rounded-xl border border-input-border bg-input-bg py-2.5 ps-10 pe-4 text-sm text-text-primary outline-none transition-all placeholder:text-text-tertiary focus:border-input-focus focus:ring-2 focus:ring-input-focus-soft"
         />
       </div>
 
-      {/* Available skills */}
+      {/* Available interests */}
       <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-text-tertiary">
         Available topics
       </p>
@@ -155,23 +164,23 @@ export function SkillSelectorCard({
           <p className="text-xs text-text-tertiary">
             {t("onboarding.learningMethod.loading")}
           </p>
-        ) : filteredSkills.length > 0 ? (
-          filteredSkills.map((skill) => (
+        ) : filteredInterests.length > 0 ? (
+          filteredInterests.map((interest) => (
             <button
-              key={skill.id}
+              key={interest.id}
               type="button"
-              onClick={() => addSkill(skill)}
+              onClick={() => addInterest(interest)}
               className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:border-primary hover:bg-primary-soft hover:text-primary-text"
             >
               <HugeiconsIcon icon={Add01Icon} size={12} />
-              {skill.name}
+              {interest.name}
             </button>
           ))
         ) : (
           <p className="text-xs text-text-tertiary">
             {search
-              ? "No skills found."
-              : "All available skills are selected."}
+              ? "No interests found."
+              : "All available interests are selected."}
           </p>
         )}
       </div>

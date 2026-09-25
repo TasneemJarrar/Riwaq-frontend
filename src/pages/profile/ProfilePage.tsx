@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { getAuth } from "firebase/auth";
+
 import {
   useMyProfile,
   useUpdateMyProfile,
@@ -16,17 +16,24 @@ import {
   useCreateEducationalContent,
   useUpdateEducationalContent,
   useDeleteEducationalContent,
+  useMyInterests,
+  useAddMyInterest,
+  useRemoveMyInterest,
 } from "../../hooks/useProfile";
+
 import type {
   ExperienceResponse,
   EducationalContentResponse,
 } from "../../api/profile";
+
 import { useProfileSkills } from "../../hooks/useProfileSkills";
+
 import {
   useLearningDirections,
-  useLearningDirection,
   useUpdateLearningDirection,
+  useSkills,
 } from "../../hooks/useLearningDirections";
+
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileStats from "./components/ProfileStats";
 import ProfileAbout from "./components/ProfileAbout";
@@ -61,6 +68,7 @@ export default function ProfilePage() {
     isLoading: profileLoading,
     error: profileError,
   } = useMyProfile();
+
   const { mutateAsync: updateProfile, isPending: isUpdating } =
     useUpdateMyProfile();
 
@@ -68,6 +76,16 @@ export default function ProfilePage() {
     data: learningDirections = [],
     isLoading: learningDirectionsLoading,
   } = useLearningDirections();
+
+  const {
+    mutateAsync: updateLearningDirection,
+    isPending: isUpdatingLearningDirection,
+  } = useUpdateLearningDirection();
+
+  const {
+    data: allSkills = [],
+    isLoading: allSkillsLoading,
+  } = useSkills();
 
   const {
     profileSkills,
@@ -79,13 +97,19 @@ export default function ProfilePage() {
   } = useProfileSkills();
 
   const {
-    data: learningDirection,
-    isLoading: learningDirectionLoading,
-  } = useLearningDirection(profile?.learningDirectionId ?? null);
+    data: profileInterests = [],
+    isLoading: profileInterestsLoading,
+  } = useMyInterests();
+
   const {
-    mutateAsync: updateLearningDirection,
-    isPending: isUpdatingLearningDirection,
-  } = useUpdateLearningDirection();
+    mutateAsync: addInterest,
+    isPending: isAddingInterest,
+  } = useAddMyInterest();
+
+  const {
+    mutateAsync: removeInterest,
+    isPending: isRemovingInterest,
+  } = useRemoveMyInterest();
 
   const {
     data: ratings = [],
@@ -126,11 +150,11 @@ export default function ProfilePage() {
   const deleteContent = useDeleteEducationalContent();
 
   const [activeTab, setActiveTab] = useState<ProfileTab>("skills");
+
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isEditSkillsOpen, setIsEditSkillsOpen] = useState(false);
+
   const [skillSearch, setSkillSearch] = useState("");
-  const [selectedLearningDirectionId, setSelectedLearningDirectionId] =
-    useState("");
 
   const [form, setForm] = useState<ProfileFormState>({
     firstName: "",
@@ -140,16 +164,21 @@ export default function ProfilePage() {
   });
 
   const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
+
   const [editingExperience, setEditingExperience] =
     useState<ExperienceResponse | null>(null);
-  const [experienceForm, setExperienceForm] = useState<ExperienceFormState>({
-    title: "",
-    description: "",
-  });
+
+  const [experienceForm, setExperienceForm] =
+    useState<ExperienceFormState>({
+      title: "",
+      description: "",
+    });
 
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
+
   const [editingContent, setEditingContent] =
     useState<EducationalContentResponse | null>(null);
+
   const [contentForm, setContentForm] = useState<ContentFormState>({
     title: "",
     description: "",
@@ -161,11 +190,13 @@ export default function ProfilePage() {
 
   const displayName = useMemo(() => {
     if (!profile) return "";
+
     return `${profile.firstName ?? ""} ${profile.lastName ?? ""}`.trim();
   }, [profile]);
 
   const initials = useMemo(() => {
     if (!displayName) return "?";
+
     return displayName
       .split(" ")
       .filter(Boolean)
@@ -183,58 +214,85 @@ export default function ProfilePage() {
     [learningDirections, profile?.learningDirectionId]
   );
 
-  const availableSkills = useMemo(
-    () => learningDirection?.skills ?? [],
-    [learningDirection]
-  );
-
   const profileSkillIds = useMemo(
     () => new Set(profileSkills.map((skill) => skill.id)),
     [profileSkills]
   );
 
+  const profileInterestIds = useMemo(
+    () => new Set(profileInterests.map((interest) => interest.id)),
+    [profileInterests]
+  );
+
+  const availableSkills = useMemo(
+    () => allSkills,
+    [allSkills]
+  );
+
+  const availableInterests = useMemo(
+    () => allSkills,
+    [allSkills]
+  );
+
   const filteredSkills = useMemo(() => {
     const query = skillSearch.trim().toLowerCase();
-    if (!query) return availableSkills;
+
+    if (!query) {
+      return availableSkills;
+    }
+
     return availableSkills.filter((skill) =>
       skill.name?.toLowerCase().includes(query)
     );
   }, [availableSkills, skillSearch]);
 
+  const filteredInterests = useMemo(() => {
+    const query = skillSearch.trim().toLowerCase();
+
+    if (!query) {
+      return availableInterests;
+    }
+
+    return availableInterests.filter((interest) =>
+      interest.name?.toLowerCase().includes(query)
+    );
+  }, [availableInterests, skillSearch]);
+
   const openEditProfile = () => {
     if (!profile) return;
+
     setForm({
       firstName: profile.firstName ?? "",
       lastName: profile.lastName ?? "",
       bio: profile.bio ?? "",
       university: profile.university ?? "",
     });
+
     setIsEditProfileOpen(true);
   };
 
   const openEditSkills = () => {
-    setSelectedLearningDirectionId(profile?.learningDirectionId ?? "");
     setSkillSearch("");
     setIsEditSkillsOpen(true);
   };
 
-  const handleProfileSubmit = async (event: FormEvent) => {
+  const handleProfileSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
     await updateProfile(form);
+
     setIsEditProfileOpen(false);
   };
 
-  const handleLearningDirectionChange = async (
-    event: ChangeEvent<HTMLSelectElement>
-  ) => {
-    const directionId = event.target.value;
-    setSelectedLearningDirectionId(directionId);
-    if (!directionId) return;
-    await updateLearningDirection(directionId);
+  const handleLearningDirectionChange = async (skillId: string) => {
+    if (!skillId) return;
+
+    await updateLearningDirection(skillId);
   };
 
   const handleAddSkill = async (skillId: string) => {
     if (profileSkillIds.has(skillId)) return;
+
     await addSkill(skillId);
   };
 
@@ -242,23 +300,43 @@ export default function ProfilePage() {
     await removeSkill(skillId);
   };
 
+  const handleAddInterest = async (interestId: string) => {
+    if (profileInterestIds.has(interestId)) return;
+
+    await addInterest(interestId);
+  };
+
+  const handleRemoveInterest = async (interestId: string) => {
+    await removeInterest(interestId);
+  };
+
   const openCreateExperience = () => {
     setEditingExperience(null);
-    setExperienceForm({ title: "", description: "" });
+
+    setExperienceForm({
+      title: "",
+      description: "",
+    });
+
     setIsExperienceModalOpen(true);
   };
 
   const openEditExperience = (exp: ExperienceResponse) => {
     setEditingExperience(exp);
+
     setExperienceForm({
       title: exp.title ?? "",
       description: exp.description ?? "",
     });
+
     setIsExperienceModalOpen(true);
   };
 
-  const handleExperienceSubmit = async (event: FormEvent) => {
+  const handleExperienceSubmit = async (
+    event: React.FormEvent
+  ) => {
     event.preventDefault();
+
     const payload = {
       title: experienceForm.title.trim() || null,
       description: experienceForm.description.trim() || null,
@@ -278,35 +356,48 @@ export default function ProfilePage() {
   };
 
   const handleDeleteExperience = async (id: string) => {
-    const confirmed = window.confirm(t("profile.experiences.deleteConfirm"));
+    const confirmed = window.confirm(
+      t("profile.experiences.deleteConfirm")
+    );
+
     if (!confirmed) return;
+
     await deleteExperience.mutateAsync(id);
   };
 
   const openCreateContent = () => {
     setEditingContent(null);
+
     setContentForm({
       title: "",
       description: "",
       contentType: "",
       contentUrl: "",
     });
+
     setIsContentModalOpen(true);
   };
 
-  const openEditContent = (item: EducationalContentResponse) => {
+  const openEditContent = (
+    item: EducationalContentResponse
+  ) => {
     setEditingContent(item);
+
     setContentForm({
       title: item.title ?? "",
       description: item.description ?? "",
       contentType: item.contentType ?? "",
       contentUrl: item.contentUrl ?? "",
     });
+
     setIsContentModalOpen(true);
   };
 
-  const handleContentSubmit = async (event: FormEvent) => {
+  const handleContentSubmit = async (
+    event: React.FormEvent
+  ) => {
     event.preventDefault();
+
     const payload = {
       title: contentForm.title.trim() || null,
       description: contentForm.description.trim() || null,
@@ -328,8 +419,12 @@ export default function ProfilePage() {
   };
 
   const handleDeleteContent = async (id: string) => {
-    const confirmed = window.confirm(t("profile.content.deleteConfirm"));
+    const confirmed = window.confirm(
+      t("profile.content.deleteConfirm")
+    );
+
     if (!confirmed) return;
+
     await deleteContent.mutateAsync(id);
   };
 
@@ -349,7 +444,10 @@ export default function ProfilePage() {
     return (
       <div className="min-h-[calc(100vh-64px)] bg-background px-4 py-10 text-text-primary">
         <div className="mx-auto max-w-xl rounded-3xl border border-error/30 bg-error-soft p-6 text-center">
-          <h1 className="text-lg font-bold">{t("profile.error.title")}</h1>
+          <h1 className="text-lg font-bold">
+            {t("profile.error.title")}
+          </h1>
+
           <p className="mt-2 text-sm text-text-secondary">
             {t("profile.error.description")}
           </p>
@@ -368,6 +466,15 @@ export default function ProfilePage() {
             photoURL={firebaseUser?.photoURL}
             email={firebaseUser?.email}
             university={profile.university}
+            learningDirectionId={profile.learningDirectionId}
+            learningDirections={learningDirections}
+            learningDirectionsLoading={learningDirectionsLoading}
+            isUpdatingLearningDirection={
+              isUpdatingLearningDirection
+            }
+            onLearningDirectionChange={
+              handleLearningDirectionChange
+            }
             onEditProfile={openEditProfile}
           />
 
@@ -375,20 +482,29 @@ export default function ProfilePage() {
             <ProfileStats
               points={profile.points}
               skillsCount={profileSkills.length}
-              learningDirectionName={currentLearningDirection?.name}
+              learningDirectionName={
+                currentLearningDirection?.name
+              }
             />
 
-            <ProfileAbout bio={profile.bio} onEdit={openEditProfile} />
+            <ProfileAbout
+              bio={profile.bio}
+              onEdit={openEditProfile}
+            />
           </div>
         </section>
 
-        <ProfileTabs activeTab={activeTab} onChange={setActiveTab} />
+        <ProfileTabs
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
 
         {activeTab === "skills" && (
           <ProfileSkillsSection
             profileSkills={profileSkills}
             profileSkillsLoading={profileSkillsLoading}
-            currentLearningDirection={currentLearningDirection}
+            profileInterests={profileInterests}
+            profileInterestsLoading={profileInterestsLoading}
             onEditSkills={openEditSkills}
           />
         )}
@@ -422,6 +538,7 @@ export default function ProfilePage() {
               isLoading={progressLoading}
               isError={progressError}
             />
+
             <ProfileExperiences
               experiences={experiences}
               isLoading={experiencesLoading}
@@ -431,6 +548,7 @@ export default function ProfilePage() {
               onDelete={handleDeleteExperience}
               isDeleting={deleteExperience.isPending}
             />
+
             <ProfileSessions
               sessions={sessions}
               isLoading={sessionsLoading}
@@ -452,21 +570,36 @@ export default function ProfilePage() {
 
       {isEditSkillsOpen && (
         <EditSkillsModal
-          selectedLearningDirectionId={selectedLearningDirectionId}
-          learningDirections={learningDirections}
-          learningDirectionsLoading={learningDirectionsLoading}
-          isUpdatingLearningDirection={isUpdatingLearningDirection}
-          onLearningDirectionChange={handleLearningDirectionChange}
           skillSearch={skillSearch}
           onSkillSearchChange={setSkillSearch}
+
           profileSkills={profileSkills}
           filteredSkills={filteredSkills}
           profileSkillIds={profileSkillIds}
-          learningDirectionLoading={learningDirectionLoading}
+
+          profileInterests={profileInterests}
+          filteredInterests={filteredInterests}
+          profileInterestIds={profileInterestIds}
+
+          skillsLoading={
+            profileSkillsLoading || allSkillsLoading
+          }
+          interestsLoading={
+            profileInterestsLoading || allSkillsLoading
+          }
+
           isAdding={isAdding}
           isRemoving={isRemoving}
+
+          isAddingInterest={isAddingInterest}
+          isRemovingInterest={isRemovingInterest}
+
           onAddSkill={handleAddSkill}
           onRemoveSkill={handleRemoveSkill}
+
+          onAddInterest={handleAddInterest}
+          onRemoveInterest={handleRemoveInterest}
+
           onClose={() => setIsEditSkillsOpen(false)}
         />
       )}
@@ -477,7 +610,8 @@ export default function ProfilePage() {
           form={experienceForm}
           setForm={setExperienceForm}
           isSaving={
-            createExperience.isPending || updateExperience.isPending
+            createExperience.isPending ||
+            updateExperience.isPending
           }
           onClose={() => {
             setIsExperienceModalOpen(false);
@@ -492,7 +626,10 @@ export default function ProfilePage() {
           mode={editingContent ? "edit" : "create"}
           form={contentForm}
           setForm={setContentForm}
-          isSaving={createContent.isPending || updateContent.isPending}
+          isSaving={
+            createContent.isPending ||
+            updateContent.isPending
+          }
           onClose={() => {
             setIsContentModalOpen(false);
             setEditingContent(null);
