@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import FeedComposer from "./components/FeedComposer";
 import FeedFilters, {
   type FeedFilterKey,
@@ -19,7 +20,12 @@ import {
   connectionsApi,
   type ConnectionRequestResponse,
 } from "../../api/connections";
-import { connectionKeys } from "../../hooks/useConnections";
+import {
+  connectionKeys,
+} from "../../hooks/useConnections";
+import {
+  conversationKeys,
+} from "../../hooks/useConversations";
 import type { EducationalContentResponse } from "../../api/profile";
 
 type FeedPostItem = {
@@ -29,13 +35,18 @@ type FeedPostItem = {
 
 export default function FeedPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<FeedFilterKey>("curated");
   const queryClient = useQueryClient();
 
-  const { data: allPosts, isLoading: loadingList } = useAllEducationalContent();
+  const { data: allPosts, isLoading: loadingList } =
+    useAllEducationalContent();
+
   const { data: recommended, isLoading: loadingRec } =
     usePostRecommendations(12);
-  const { data: peopleRec } = usePeopleRecommendations(4);
+
+  const { data: peopleRec } =
+    usePeopleRecommendations(4);
 
   const {
     data: receivedRequests = [],
@@ -50,8 +61,11 @@ export default function FeedPage() {
   const sendRequest = useMutation({
     mutationFn: (receiverUserId: string) =>
       connectionsApi.send(receiverUserId),
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: connectionKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: connectionKeys.all,
+      });
     },
   });
 
@@ -63,8 +77,23 @@ export default function FeedPage() {
       id: string;
       status: "Accepted" | "Rejected";
     }) => connectionsApi.updateStatus(id, { status }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: connectionKeys.all });
+
+    onSuccess: async (response, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: connectionKeys.all,
+      });
+
+      if (variables.status === "Accepted") {
+        await queryClient.invalidateQueries({
+          queryKey: conversationKeys.list(),
+        });
+
+        if (response.conversationId) {
+          navigate(
+            `/chat?conversationId=${response.conversationId}`
+          );
+        }
+      }
     },
   });
 
@@ -73,20 +102,31 @@ export default function FeedPage() {
       ? recommended.items.map((item) => ({
           post: item.post,
           label: item.primaryTopic
-            ? t("feed.post.recommendedTopic", { topic: item.primaryTopic })
+            ? t("feed.post.recommendedTopic", {
+                topic: item.primaryTopic,
+              })
             : t("feed.post.recommended"),
         }))
-      : (allPosts ?? []).map((post: EducationalContentResponse) => ({
-          post,
-          label: null,
-        }));
+      : (allPosts ?? []).map(
+          (post: EducationalContentResponse) => ({
+            post,
+            label: null,
+          })
+        );
 
-  const isLoadingPosts = filter === "curated" ? loadingRec : loadingList;
+  const isLoadingPosts =
+    filter === "curated" ? loadingRec : loadingList;
 
   const pendingRequests = receivedRequests.filter(
-    (r: ConnectionRequestResponse) => {
-      const s = (r.status ?? "Pending").toLowerCase();
-      return s === "pending" || s === "requested";
+    (request: ConnectionRequestResponse) => {
+      const status = (
+        request.status ?? "Pending"
+      ).toLowerCase();
+
+      return (
+        status === "pending" ||
+        status === "requested"
+      );
     }
   );
 
@@ -95,7 +135,11 @@ export default function FeedPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-5">
           <FeedComposer />
-          <FeedFilters active={filter} onChange={setFilter} />
+
+          <FeedFilters
+            active={filter}
+            onChange={setFilter}
+          />
 
           {filter === "curated" && (
             <>
@@ -140,24 +184,33 @@ export default function FeedPage() {
               ) : pendingRequests.length === 0 ? (
                 <div className="rounded-3xl border border-border bg-surface-2 p-10 text-center text-text-secondary">
                   {t("feed.swap.empty", {
-                    defaultValue: "No peer swap requests right now.",
+                    defaultValue:
+                      "No peer swap requests right now.",
                   })}
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {pendingRequests.map((req: ConnectionRequestResponse) => (
-                    <SwapRequestCard
-                      key={req.id}
-                      request={req}
-                      isUpdating={updateRequest.isPending}
-                      onAccept={(id) =>
-                        updateRequest.mutate({ id, status: "Accepted" })
-                      }
-                      onDecline={(id) =>
-                        updateRequest.mutate({ id, status: "Rejected" })
-                      }
-                    />
-                  ))}
+                  {pendingRequests.map(
+                    (request: ConnectionRequestResponse) => (
+                      <SwapRequestCard
+                        key={request.id}
+                        request={request}
+                        isUpdating={updateRequest.isPending}
+                        onAccept={(id) =>
+                          updateRequest.mutate({
+                            id,
+                            status: "Accepted",
+                          })
+                        }
+                        onDecline={(id) =>
+                          updateRequest.mutate({
+                            id,
+                            status: "Rejected",
+                          })
+                        }
+                      />
+                    )
+                  )}
                 </div>
               )}
             </>
@@ -172,6 +225,7 @@ export default function FeedPage() {
               <h3 className="text-sm font-semibold text-text-primary">
                 {t("feed.sidebar.suggestedSwaps")}
               </h3>
+
               <button
                 type="button"
                 className="text-xs font-medium text-primary-text hover:underline"
@@ -187,7 +241,9 @@ export default function FeedPage() {
                   <SuggestedSwapCard
                     key={item.profile.userId}
                     item={item}
-                    onRequestSwap={(userId) => sendRequest.mutate(userId)}
+                    onRequestSwap={(userId) =>
+                      sendRequest.mutate(userId)
+                    }
                     isLoading={sendRequest.isPending}
                   />
                 ))

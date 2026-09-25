@@ -5,6 +5,7 @@ import {
   type UpdateConnectionRequestStatusRequest,
 } from "../api/connections";
 import { useAuthStore } from "../store/useAuthStore";
+import { conversationKeys } from "./useConversations";
 
 export const connectionKeys = {
   all: ["connections"] as const,
@@ -25,6 +26,7 @@ export interface EarnRequestItem {
 
 function formatRelativeDate(iso: string): string {
   const date = new Date(iso);
+
   if (Number.isNaN(date.getTime())) return iso;
 
   const now = new Date();
@@ -48,9 +50,11 @@ function displayName(
   user: ConnectionRequestResponse["sender"] | null | undefined
 ): string {
   if (!user) return "Someone";
+
   const first = user.firstName?.trim() ?? "";
   const last = user.lastName?.trim() ?? "";
   const full = `${first} ${last}`.trim();
+
   return full || "Someone";
 }
 
@@ -61,12 +65,14 @@ export function mapReceivedToEarnRequest(
   const direction = req.sender?.learningDirectionName?.trim();
 
   const tag = direction || "Connection";
+
   const title = direction
     ? `${name} wants to connect · ${direction}`
     : `${name} wants to connect with you`;
 
   const tagClassName =
-    tag.toLowerCase().includes("design") || tag.toLowerCase().includes("ui")
+    tag.toLowerCase().includes("design") ||
+    tag.toLowerCase().includes("ui")
       ? "bg-gamification-soft text-gamification-text"
       : "bg-success-soft text-success-text";
 
@@ -90,17 +96,20 @@ export function useReceivedConnectionRequests() {
     staleTime: 30_000,
     enabled: isAuthenticated,
     select: (data: ConnectionRequestResponse[]) => {
-      const pending = data.filter((r) => {
-        const s = (r.status ?? "").toLowerCase();
+      const pending = data.filter((request) => {
+        const status = (request.status ?? "").toLowerCase();
+
         return (
-          !s ||
-          s === "pending" ||
-          s === "sent" ||
-          s === "requested" ||
-          s === "open"
+          !status ||
+          status === "pending" ||
+          status === "sent" ||
+          status === "requested" ||
+          status === "open"
         );
       });
+
       const source = pending.length > 0 ? pending : data;
+
       return source.map(mapReceivedToEarnRequest);
     },
   });
@@ -117,8 +126,19 @@ export function useUpdateConnectionRequestStatus() {
       id: string;
       status: UpdateConnectionRequestStatusRequest["status"];
     }) => connectionsApi.updateStatus(id, { status }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: connectionKeys.all });
+
+    onSuccess: async (response, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: connectionKeys.all,
+      });
+
+      if (variables.status === "Accepted") {
+        await queryClient.invalidateQueries({
+          queryKey: conversationKeys.list(),
+        });
+      }
+
+      return response;
     },
   });
 }
@@ -149,9 +169,13 @@ export function useSendConnectionRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (receiverUserId: string) => connectionsApi.send(receiverUserId),
+    mutationFn: (receiverUserId: string) =>
+      connectionsApi.send(receiverUserId),
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: connectionKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: connectionKeys.all,
+      });
     },
   });
 }
