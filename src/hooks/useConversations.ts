@@ -51,18 +51,22 @@ export function useSendMessage(conversationId: string | null) {
 
   return useMutation({
     mutationFn: (payload: SendMessageRequest) => {
-      if (!conversationId) throw new Error("No conversation selected");
+      if (!conversationId) {
+        throw new Error("No conversation selected");
+      }
+
       return conversationsApi.sendMessage(conversationId, payload);
     },
     onSuccess: () => {
-      if (conversationId) {
-        queryClient.invalidateQueries({
-          queryKey: conversationKeys.messages(conversationId),
-        });
-        queryClient.invalidateQueries({
-          queryKey: conversationKeys.list(),
-        });
-      }
+      if (!conversationId) return;
+
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.messages(conversationId),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.list(),
+      });
     },
   });
 }
@@ -78,8 +82,11 @@ export function useUpdateMessage() {
       messageId: string;
       payload: UpdateMessageRequest;
     }) => conversationsApi.updateMessage(messageId, payload),
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.all,
+      });
     },
   });
 }

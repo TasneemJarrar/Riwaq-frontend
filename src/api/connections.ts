@@ -10,6 +10,7 @@ export interface ConnectionRequestResponse {
   receiver?: PublicUserProfileResponse | null;
   senderUserId?: string | null;
   receiverUserId?: string | null;
+  conversationId?: string | null;
 }
 
 export interface ConnectionResponse {
@@ -60,9 +61,9 @@ export const connectionsApi = {
   },
 
   getConnections: async (): Promise<ConnectionResponse[]> => {
-  const { data } = await authAxiosInstance.get<ConnectionResponse[]>(
-    "/api/connections"
-  );
-  return data;
-},
+    const { data } = await authAxiosInstance.get<ConnectionResponse[]>(
+      "/api/connections"
+    );
+    return data;
+  },
 };
