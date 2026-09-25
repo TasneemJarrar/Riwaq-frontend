@@ -142,6 +142,7 @@ export const profileApi = {
     const { data } = await authAxiosInstance.get<UserProfileResponse>(
       "/api/users/me"
     );
+
     return data;
   },
 
@@ -152,6 +153,7 @@ export const profileApi = {
       "/api/users/me",
       payload
     );
+
     return data;
   },
 
@@ -159,6 +161,7 @@ export const profileApi = {
     const { data } = await authAxiosInstance.get<PublicUserProfileResponse>(
       `/api/users/${id}`
     );
+
     return data;
   },
 
@@ -180,6 +183,14 @@ export const profileApi = {
     await authAxiosInstance.delete(`/api/profiles/me/skills/${skillId}`);
   },
 
+  getInterests: async (): Promise<InterestResponse[]> => {
+    const { data } = await authAxiosInstance.get<InterestResponse[]>(
+      "/api/interests"
+    );
+
+    return data;
+  },
+
   getMyInterests: async (): Promise<InterestResponse[]> => {
     const { data } = await authAxiosInstance.get<InterestResponse[]>(
       "/api/profiles/me/interests"
@@ -187,10 +198,24 @@ export const profileApi = {
     return data;
   },
 
+  addMyInterest: async (interestId: string): Promise<InterestResponse> => {
+    const { data } = await authAxiosInstance.put<InterestResponse>(
+      `/api/profiles/me/interests/${interestId}`
+    );
+    return data;
+  },
+
+  removeMyInterest: async (interestId: string): Promise<void> => {
+    await authAxiosInstance.delete(
+      `/api/profiles/me/interests/${interestId}`
+    );
+  },
+
   getMyExperiences: async (): Promise<ExperienceResponse[]> => {
     const { data } = await authAxiosInstance.get<ExperienceResponse[]>(
       "/api/profiles/me/experiences"
     );
+
     return data;
   },
 
@@ -201,6 +226,7 @@ export const profileApi = {
       "/api/profiles/me/experiences",
       payload
     );
+
     return data;
   },
 
@@ -212,6 +238,7 @@ export const profileApi = {
       `/api/profiles/me/experiences/${id}`,
       payload
     );
+
     return data;
   },
 
@@ -223,6 +250,7 @@ export const profileApi = {
     const { data } = await authAxiosInstance.get<ProgressResponse[]>(
       "/api/users/me/progress"
     );
+
     return data;
   },
 
@@ -230,30 +258,29 @@ export const profileApi = {
     const { data } = await authAxiosInstance.get<LearningSessionResponse[]>(
       "/api/learning-sessions"
     );
+
     return data;
   },
 
-  getEducationalContent: async (): Promise<EducationalContentResponse[]> => {
-    const { data } = await authAxiosInstance.get<EducationalContentResponse[]>(
-      "/api/educational-content"
-    );
-    return data;
-  },
+  getEducationalContent: async (): Promise<
+    EducationalContentResponse[]
+  > => {
+    const { data } = await authAxiosInstance.get<
+      EducationalContentResponse[]
+    >("/api/educational-content");
 
-  getUserRatings: async (userId: string): Promise<RatingResponse[]> => {
-    const { data } = await authAxiosInstance.get<RatingResponse[]>(
-      `/api/profiles/${userId}/ratings`
-    );
     return data;
   },
 
   createEducationalContent: async (
     payload: CreateEducationalContentRequest
   ): Promise<EducationalContentResponse> => {
-    const { data } = await authAxiosInstance.post<EducationalContentResponse>(
-      "/api/educational-content",
-      payload
-    );
+    const { data } =
+      await authAxiosInstance.post<EducationalContentResponse>(
+        "/api/educational-content",
+        payload
+      );
+
     return data;
   },
 
@@ -261,10 +288,12 @@ export const profileApi = {
     id: string,
     payload: UpdateEducationalContentRequest
   ): Promise<EducationalContentResponse> => {
-    const { data } = await authAxiosInstance.patch<EducationalContentResponse>(
-      `/api/educational-content/${id}`,
-      payload
-    );
+    const { data } =
+      await authAxiosInstance.patch<EducationalContentResponse>(
+        `/api/educational-content/${id}`,
+        payload
+      );
+
     return data;
   },
 
@@ -275,9 +304,11 @@ export const profileApi = {
   getEducationalContentById: async (
     id: string
   ): Promise<EducationalContentResponse> => {
-    const { data } = await authAxiosInstance.get<EducationalContentResponse>(
-      `/api/educational-content/${id}`
-    );
+    const { data } =
+      await authAxiosInstance.get<EducationalContentResponse>(
+        `/api/educational-content/${id}`
+      );
+
     return data;
   },
 
@@ -302,17 +333,32 @@ export const profileApi = {
   },
 
   unrepostContent: async (id: string): Promise<void> => {
-    await authAxiosInstance.delete(`/api/educational-content/${id}/reposts`);
+    await authAxiosInstance.delete(
+      `/api/educational-content/${id}/reposts`
+    );
   },
 
   shareContent: async (id: string): Promise<void> => {
     await authAxiosInstance.post(`/api/educational-content/${id}/shares`);
   },
 
-  getComments: async (contentId: string): Promise<CommentResponse[]> => {
+  getUserRatings: async (
+    userId: string
+  ): Promise<RatingResponse[]> => {
+    const { data } = await authAxiosInstance.get<RatingResponse[]>(
+      `/api/profiles/${userId}/ratings`
+    );
+
+    return data;
+  },
+
+  getComments: async (
+    contentId: string
+  ): Promise<CommentResponse[]> => {
     const { data } = await authAxiosInstance.get<CommentResponse[]>(
       `/api/educational-content/${contentId}/comments`
     );
+
     return data;
   },
 
@@ -324,9 +370,10 @@ export const profileApi = {
       `/api/educational-content/${contentId}/comments`,
       payload
     );
+
     return data;
   },
-  
+
   updateComment: async (
     commentId: string,
     payload: { content: string | null }
@@ -335,6 +382,7 @@ export const profileApi = {
       `/api/comments/${commentId}`,
       payload
     );
+
     return data;
   },
 

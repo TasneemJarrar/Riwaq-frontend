@@ -68,6 +68,36 @@ export function useMyInterests() {
   });
 }
 
+export function useAddMyInterest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (interestId: string) =>
+      profileApi.addMyInterest(interestId),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: profileKeys.interests(),
+      });
+    },
+  });
+}
+
+export function useRemoveMyInterest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (interestId: string) =>
+      profileApi.removeMyInterest(interestId),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: profileKeys.interests(),
+      });
+    },
+  });
+}
+
 export function useMyExperiences() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 

@@ -7,23 +7,21 @@ interface SkillItem {
   name: string | null;
 }
 
-interface LearningDirectionItem {
-  id: string;
-  name: string | null;
-  description?: string | null;
-}
-
 interface ProfileSkillsSectionProps {
   profileSkills: SkillItem[];
   profileSkillsLoading: boolean;
-  currentLearningDirection?: LearningDirectionItem;
+
+  profileInterests: SkillItem[];
+  profileInterestsLoading: boolean;
+
   onEditSkills: () => void;
 }
 
 export default function ProfileSkillsSection({
   profileSkills,
   profileSkillsLoading,
-  currentLearningDirection,
+  profileInterests,
+  profileInterestsLoading,
   onEditSkills,
 }: ProfileSkillsSectionProps) {
   const { t } = useTranslation();
@@ -35,9 +33,11 @@ export default function ProfileSkillsSection({
           <p className="text-xs font-semibold uppercase tracking-wider text-primary-text">
             {t("profile.skillsLabel")}
           </p>
+
           <h2 className="mt-1 text-xl font-extrabold">
             {t("profile.skillsTitle")}
           </h2>
+
           <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
             {t("profile.skillsDescription")}
           </p>
@@ -54,8 +54,11 @@ export default function ProfileSkillsSection({
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        {/* Skills */}
         <div className="rounded-2xl border border-border bg-surface-soft p-5">
-          <h3 className="text-sm font-bold">{t("profile.skillsIHave")}</h3>
+          <h3 className="text-sm font-bold">
+            {t("profile.skillsIHave")}
+          </h3>
 
           {profileSkillsLoading ? (
             <div className="mt-4 h-10 animate-pulse rounded-xl bg-surface-2" />
@@ -77,25 +80,32 @@ export default function ProfileSkillsSection({
           )}
         </div>
 
+        {/* Interests */}
         <div className="rounded-2xl border border-border bg-surface-soft p-5">
           <h3 className="text-sm font-bold">
-            {t("profile.skillIWantToLearn")}
+            {t("profile.interests", {
+              defaultValue: "Interests",
+            })}
           </h3>
 
-          {currentLearningDirection ? (
-            <>
-              <span className="mt-4 inline-flex rounded-full bg-primary-soft px-3.5 py-2 text-sm font-semibold text-primary-text">
-                {currentLearningDirection.name}
-              </span>
-              {currentLearningDirection.description && (
-                <p className="mt-3 text-sm leading-6 text-text-secondary">
-                  {currentLearningDirection.description}
-                </p>
-              )}
-            </>
+          {profileInterestsLoading ? (
+            <div className="mt-4 h-10 animate-pulse rounded-xl bg-surface-2" />
+          ) : profileInterests.length > 0 ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {profileInterests.map((interest) => (
+                <span
+                  key={interest.id}
+                  className="rounded-full border border-border bg-surface-2 px-3.5 py-2 text-sm font-medium text-text-primary"
+                >
+                  {interest.name}
+                </span>
+              ))}
+            </div>
           ) : (
             <p className="mt-4 text-sm text-text-tertiary">
-              {t("profile.noLearningDirection")}
+              {t("profile.noInterests", {
+                defaultValue: "No interests added yet.",
+              })}
             </p>
           )}
         </div>

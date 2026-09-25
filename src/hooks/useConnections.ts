@@ -177,5 +177,45 @@ export function useSendConnectionRequest() {
         queryKey: connectionKeys.all,
       });
     },
+
+    onError: async (error: unknown) => {
+      const message =
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response &&
+        error.response.data &&
+        typeof error.response.data === "object" &&
+        "message" in error.response.data
+          ? String(error.response.data.message)
+          : "";
+
+      if (message.toLowerCase().includes("already connected")) {
+        await queryClient.invalidateQueries({
+          queryKey: connectionKeys.all,
+        });
+      }
+    },
+  });
+}
+
+export function useDeleteConnection() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (connectionId: string) =>
+      connectionsApi.deleteConnection(connectionId),
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: connectionKeys.all,
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: conversationKeys.list(),
+      });
+    },
   });
 }
