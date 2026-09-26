@@ -7,6 +7,8 @@ import {
   type CreateEducationalContentRequest,
   type UpdateEducationalContentRequest,
   type CreateCommentRequest,
+  type CreateProgressRequest,
+  type UpdateProgressRequest,
 } from "../api/profile";
 import { useAuthStore } from "../store/useAuthStore";
 import { pointsApi } from "../api/points";
@@ -328,5 +330,45 @@ export function useAllEducationalContent() {
     queryFn: profileApi.getEducationalContent,
     enabled: isAuthenticated,
     staleTime: 60_000,
+  });
+}
+
+export function useCreateProgress() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateProgressRequest) =>
+      profileApi.createProgress(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.progress() });
+    },
+  });
+}
+
+export function useUpdateProgress() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateProgressRequest;
+    }) => profileApi.updateProgress(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.progress() });
+    },
+  });
+}
+
+export function useDeleteProgress() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => profileApi.deleteProgress(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.progress() });
+    },
   });
 }
