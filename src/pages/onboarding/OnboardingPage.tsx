@@ -32,17 +32,6 @@ export default function OnboardingPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  /**
-   * IMPORTANT:
-   *
-   * /api/skills is the single source of the 12 topics.
-   *
-   * We do NOT use:
-   * /api/learning-directions
-   * /api/interests
-   *
-   * for displaying onboarding options.
-   */
   const {
     data: topics = [],
     isLoading: topicsLoading,
@@ -53,126 +42,28 @@ export default function OnboardingPage() {
   const [step, setStep] =
     useState<Step>("direction");
 
-  /**
-   * ONE learning direction.
-   */
   const [selectedDirection, setSelectedDirection] =
     useState<string | null>(null);
 
-  /**
-   * MANY skills.
-   */
   const [selectedSkills, setSelectedSkills] =
     useState<string[]>([]);
 
-  /**
-   * MANY interests.
-   *
-   * The options come from /api/skills because
-   * the interests endpoint currently has no seed data.
-   */
   const [selectedInterests, setSelectedInterests] =
     useState<string[]>([]);
 
   const [isSaving, setIsSaving] =
     useState(false);
 
-  /**
-   * STEP 1 -> STEP 2
-   */
   const handleDirectionContinue = () => {
     if (!selectedDirection) return;
 
     setStep("skills");
   };
 
-  /**
-   * STEP 2 -> STEP 3
-   */
   const handleSkillsContinue = () => {
     setStep("interests");
   };
 
-  /**
-   * FINISH
-   */
-  const handleFinish = async () => {
-    if (!selectedDirection) return;
-
-    try {
-      setIsSaving(true);
-
-      /**
-       * -------------------------
-       * LEARNING DIRECTION
-       * -------------------------
-       *
-       * Exactly ONE topic.
-       */
-      await selectLearningDirection(
-        selectedDirection
-      );
-
-      /**
-       * -------------------------
-       * SKILLS
-       * -------------------------
-       *
-       * Independent from learning direction.
-       */
-      await Promise.all(
-        selectedSkills.map((skillId) =>
-          profileApi
-            .addMySkill(skillId)
-            .catch((error) => {
-              console.error(
-                "Failed to add skill:",
-                skillId,
-                error
-              );
-            })
-        )
-      );
-
-      /**
-       * -------------------------
-       * INTERESTS
-       * -------------------------
-       *
-       * These are selected independently
-       * from the same 12 topics.
-       *
-       * The backend must accept the topic IDs
-       * as interest IDs for this to persist.
-       */
-      await Promise.all(
-        selectedInterests.map((interestId) =>
-          profileApi
-            .addMyInterest(interestId)
-            .catch((error) => {
-              console.error(
-                "Failed to add interest:",
-                interestId,
-                error
-              );
-            })
-        )
-      );
-
-      navigate("/feed");
-    } catch (error) {
-      console.error(
-        "Onboarding failed:",
-        error
-      );
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  /**
-   * BACK
-   */
   const handleBack = () => {
     if (step === "interests") {
       setStep("skills");
@@ -186,6 +77,56 @@ export default function OnboardingPage() {
 
     navigate("/feed");
   };
+
+  const handleFinish = async () => {
+  if (!selectedDirection) return;
+
+  try {
+    setIsSaving(true);
+
+    await selectLearningDirection(selectedDirection);
+
+    const existingSkills = await profileApi.getMySkills().catch(() => []);
+    const existingSkillIds = new Set(existingSkills.map((s) => s.id));
+
+    const skillsToAdd = selectedSkills.filter(
+      (id) => !existingSkillIds.has(id)
+    );
+
+    await Promise.all(
+      skillsToAdd.map((skillId) => profileApi.addMySkill(skillId))
+    );
+
+    const availableInterests = await profileApi
+      .getInterests()
+      .catch(() => []);
+
+    if (availableInterests.length > 0) {
+      const interestIdSet = new Set(availableInterests.map((i) => i.id));
+      const existingInterests = await profileApi
+        .getMyInterests()
+        .catch(() => []);
+      const existingInterestIds = new Set(
+        existingInterests.map((i) => i.id)
+      );
+
+      const interestsToAdd = selectedInterests.filter(
+        (id) =>
+          interestIdSet.has(id) && !existingInterestIds.has(id)
+      );
+
+      await Promise.all(
+        interestsToAdd.map((id) => profileApi.addMyInterest(id))
+      );
+    }
+
+    navigate("/feed");
+  } catch (error) {
+    console.error("Onboarding failed:", error);
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   const stepNumber =
     step === "direction"
@@ -270,11 +211,10 @@ export default function OnboardingPage() {
             {[1, 2, 3].map((number) => (
               <div
                 key={number}
-                className={`h-2 rounded-full ${
-                  number <= stepNumber
+                className={`h-2 rounded-full ${number <= stepNumber
                     ? "bg-primary"
                     : "bg-surface-soft"
-                }`}
+                  }`}
               />
             ))}
           </div>
@@ -344,11 +284,10 @@ export default function OnboardingPage() {
                               topic.id
                             )
                           }
-                          className={`group rounded-3xl border p-6 text-start shadow-card transition-all ${
-                            isSelected
+                          className={`group rounded-3xl border p-6 text-start shadow-card transition-all ${isSelected
                               ? "border-primary bg-primary-soft"
                               : "border-border bg-surface-2 hover:border-primary/50"
-                          }`}
+                            }`}
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-soft text-primary-text">
@@ -429,8 +368,8 @@ export default function OnboardingPage() {
             >
               {step === "direction"
                 ? t(
-                    "onboarding.actions.skip"
-                  )
+                  "onboarding.actions.skip"
+                )
                 : "Back"}
             </button>
 

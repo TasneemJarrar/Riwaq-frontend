@@ -8,11 +8,9 @@ import {
   ShieldEllipsisIcon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
+import { useMyProfile } from "../../../hooks/useProfile";
 import {
-  useMyProfile,
-} from "../../../hooks/useProfile";
-import {
-  useLearningDirections,
+  useSkills,
   useUpdateLearningDirection,
 } from "../../../hooks/useLearningDirections";
 
@@ -40,10 +38,11 @@ export default function ProfileHeader({
 
   const { data: profile } = useMyProfile();
 
+  // Same 12 topics used for skills / interests / learning direction
   const {
-    data: learningDirections = [],
-    isLoading: learningDirectionsLoading,
-  } = useLearningDirections();
+    data: allSkills = [],
+    isLoading: skillsLoading,
+  } = useSkills();
 
   const {
     mutateAsync: updateLearningDirection,
@@ -52,20 +51,18 @@ export default function ProfileHeader({
 
   const learningDirectionId = profile?.learningDirectionId ?? null;
 
-  const currentLearningDirection = learningDirections.find(
-    (direction) => direction.id === learningDirectionId
+  const currentLearningDirection = allSkills.find(
+    (skill) => skill.id === learningDirectionId
   );
 
-  const handleLearningDirectionChange = async (
-    directionId: string
-  ) => {
-    if (!directionId || directionId === learningDirectionId) {
+  const handleLearningDirectionChange = async (skillId: string) => {
+    if (!skillId || skillId === learningDirectionId) {
       setIsEditingLearningDirection(false);
       return;
     }
 
     try {
-      await updateLearningDirection(directionId);
+      await updateLearningDirection(skillId);
       setIsEditingLearningDirection(false);
     } catch (error) {
       console.error("Failed to update learning direction:", error);
@@ -101,10 +98,7 @@ export default function ProfileHeader({
                 </h1>
 
                 <span className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2.5 py-1 text-[11px] font-semibold text-success-text">
-                  <HugeiconsIcon
-                    icon={ShieldEllipsisIcon}
-                    size={13}
-                  />
+                  <HugeiconsIcon icon={ShieldEllipsisIcon} size={13} />
                   {t("profile.verified")}
                 </span>
               </div>
@@ -118,15 +112,12 @@ export default function ProfileHeader({
 
               {university && (
                 <div className="mt-1.5 flex items-center gap-1.5 text-sm text-text-secondary">
-                  <HugeiconsIcon
-                    icon={GraduationCapIcon}
-                    size={15}
-                  />
+                  <HugeiconsIcon icon={GraduationCapIcon} size={15} />
                   {university}
                 </div>
               )}
 
-              {/* Learning Direction */}
+              {/* Learning direction + edit icon */}
               <div className="mt-2">
                 {!isEditingLearningDirection ? (
                   <div className="flex items-center gap-2 text-sm">
@@ -145,22 +136,15 @@ export default function ProfileHeader({
                         setIsEditingLearningDirection(true)
                       }
                       className="inline-flex h-6 w-6 items-center justify-center rounded-full text-text-tertiary transition-colors hover:bg-surface-soft hover:text-primary-text"
-                      aria-label={t(
-                        "profile.editLearningDirection",
-                        {
-                          defaultValue:
-                            "Edit learning direction",
-                        }
-                      )}
+                      aria-label={t("profile.editLearningDirection", {
+                        defaultValue: "Edit learning direction",
+                      })}
                     >
-                      <HugeiconsIcon
-                        icon={Edit02Icon}
-                        size={14}
-                      />
+                      <HugeiconsIcon icon={Edit02Icon} size={14} />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-semibold text-text-tertiary">
                       {t("profile.learningDirection")}:
                     </span>
@@ -174,27 +158,21 @@ export default function ProfileHeader({
                         )
                       }
                       disabled={
-                        learningDirectionsLoading ||
-                        isUpdatingLearningDirection
+                        skillsLoading || isUpdatingLearningDirection
                       }
-                      className="max-w-[220px] rounded-xl border border-input-border bg-input-bg px-3 py-1.5 text-sm text-text-primary outline-none transition focus:border-input-focus focus:ring-4 focus:ring-input-focus-soft disabled:cursor-not-allowed disabled:opacity-60"
+                      className="max-w-[240px] rounded-xl border border-input-border bg-input-bg px-3 py-1.5 text-sm text-text-primary outline-none transition focus:border-input-focus focus:ring-4 focus:ring-input-focus-soft disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <option value="">
-                        {learningDirectionsLoading
+                        {skillsLoading
                           ? t(
                               "auth.placeholders.loadingLearningDirections"
                             )
-                          : t(
-                              "profile.selectLearningDirection"
-                            )}
+                          : t("profile.selectLearningDirection")}
                       </option>
 
-                      {learningDirections.map((direction) => (
-                        <option
-                          key={direction.id}
-                          value={direction.id}
-                        >
-                          {direction.name}
+                      {allSkills.map((skill) => (
+                        <option key={skill.id} value={skill.id}>
+                          {skill.name}
                         </option>
                       ))}
                     </select>

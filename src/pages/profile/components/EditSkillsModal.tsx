@@ -158,24 +158,21 @@ export default function EditSkillsModal({
                   <button
                     key={skill.id}
                     type="button"
-                    disabled={selected || isAdding}
-                    onClick={() => onAddSkill(skill.id)}
-                    className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-start text-sm transition-colors ${
+                    disabled={isAdding || isRemoving}
+                    onClick={() =>
                       selected
-                        ? "border-success/30 bg-success-soft text-success-text"
-                        : "border-border bg-surface-soft text-text-secondary hover:border-primary hover:bg-primary-soft hover:text-primary-text"
-                    } disabled:cursor-default`}
+                        ? onRemoveSkill(skill.id)
+                        : onAddSkill(skill.id)
+                    }
+                    className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-start text-sm transition-colors ${selected
+                      ? "border-success/30 bg-success-soft text-success-text"
+                      : "border-border bg-surface-soft text-text-secondary hover:border-primary hover:bg-primary-soft hover:text-primary-text"
+                      } disabled:opacity-50`}
                   >
-                    <span className="truncate">
-                      {skill.name}
-                    </span>
+                    <span className="truncate">{skill.name}</span>
 
                     <HugeiconsIcon
-                      icon={
-                        selected
-                          ? ShieldEllipsisIcon
-                          : Add01Icon
-                      }
+                      icon={selected ? Cancel01Icon : Add01Icon}
                       size={15}
                     />
                   </button>
@@ -223,31 +220,33 @@ export default function EditSkillsModal({
               </p>
 
               <div className="flex flex-wrap gap-2">
-                {profileInterests.map((interest) => (
-                  <div
-                    key={interest.id}
-                    className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-soft py-1.5 ps-3.5 pe-2"
-                  >
-                    <span className="text-sm font-medium text-text-primary">
-                      {interest.name}
-                    </span>
+                {filteredInterests.map((interest) => {
+                  const selected = profileInterestIds.has(interest.id);
 
+                  return (
                     <button
+                      key={interest.id}
                       type="button"
+                      disabled={isAddingInterest || isRemovingInterest}
                       onClick={() =>
-                        onRemoveInterest(interest.id)
+                        selected
+                          ? onRemoveInterest(interest.id)
+                          : onAddInterest(interest.id)
                       }
-                      disabled={isRemovingInterest}
-                      className="text-text-tertiary transition-colors hover:text-error disabled:opacity-50"
-                      aria-label={`${t("common.remove")} ${interest.name}`}
+                      className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-start text-sm transition-colors ${selected
+                          ? "border-success/30 bg-success-soft text-success-text"
+                          : "border-border bg-surface-soft text-text-secondary hover:border-primary hover:bg-primary-soft hover:text-primary-text"
+                        } disabled:opacity-50`}
                     >
+                      <span className="truncate">{interest.name}</span>
+
                       <HugeiconsIcon
-                        icon={Cancel01Icon}
-                        size={14}
+                        icon={selected ? Cancel01Icon : Add01Icon}
+                        size={15}
                       />
                     </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -278,11 +277,10 @@ export default function EditSkillsModal({
                     onClick={() =>
                       onAddInterest(interest.id)
                     }
-                    className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-start text-sm transition-colors ${
-                      selected
-                        ? "border-success/30 bg-success-soft text-success-text"
-                        : "border-border bg-surface-soft text-text-secondary hover:border-primary hover:bg-primary-soft hover:text-primary-text"
-                    } disabled:cursor-default`}
+                    className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-start text-sm transition-colors ${selected
+                      ? "border-success/30 bg-success-soft text-success-text"
+                      : "border-border bg-surface-soft text-text-secondary hover:border-primary hover:bg-primary-soft hover:text-primary-text"
+                      } disabled:cursor-default`}
                   >
                     <span className="truncate">
                       {interest.name}
