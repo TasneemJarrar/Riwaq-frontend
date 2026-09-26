@@ -71,6 +71,17 @@ export interface ProgressResponse {
   updatedAt: string;
 }
 
+export interface CreateProgressRequest {
+  learningDirectionId: string;
+  level?: string | null;
+  startedAt: string;
+}
+
+export interface UpdateProgressRequest {
+  level?: string | null;
+  startedAt?: string;
+}
+
 /** Learning sessions */
 export interface LearningSessionResponse {
   id: string;
@@ -252,6 +263,38 @@ export const profileApi = {
     );
 
     return data;
+  },
+
+  createProgress: async (
+    payload: CreateProgressRequest
+  ): Promise<ProgressResponse> => {
+    const { data } = await authAxiosInstance.post<ProgressResponse>(
+      "/api/users/me/progress",
+      payload
+    );
+    return data;
+  },
+
+  getProgressById: async (id: string): Promise<ProgressResponse> => {
+    const { data } = await authAxiosInstance.get<ProgressResponse>(
+      `/api/users/me/progress/${id}`
+    );
+    return data;
+  },
+
+  updateProgress: async (
+    id: string,
+    payload: UpdateProgressRequest
+  ): Promise<ProgressResponse> => {
+    const { data } = await authAxiosInstance.put<ProgressResponse>(
+      `/api/users/me/progress/${id}`,
+      payload
+    );
+    return data;
+  },
+
+  deleteProgress: async (id: string): Promise<void> => {
+    await authAxiosInstance.delete(`/api/users/me/progress/${id}`);
   },
 
   getLearningSessions: async (): Promise<LearningSessionResponse[]> => {

@@ -13,6 +13,9 @@ import {
   useCreateExperience,
   useUpdateExperience,
   useDeleteExperience,
+  useCreateProgress,
+  useUpdateProgress,
+  useDeleteProgress,
   useCreateEducationalContent,
   useUpdateEducationalContent,
   useDeleteEducationalContent,
@@ -24,14 +27,22 @@ import {
 import type {
   ExperienceResponse,
   EducationalContentResponse,
+  LearningSessionResponse,
+  ProgressResponse,
 } from "../../api/profile";
 
 import { useProfileSkills } from "../../hooks/useProfileSkills";
-
 import {
   useLearningDirections,
   useSkills,
 } from "../../hooks/useLearningDirections";
+import {
+  useCreateLearningSession,
+  useUpdateLearningSession,
+  useRateLearningSession,
+} from "../../hooks/useLearningSessions";
+import { useAcceptedConnections } from "../../hooks/useConnections";
+import { useAuthStore } from "../../store/useAuthStore";
 
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileStats from "./components/ProfileStats";
@@ -43,6 +54,7 @@ import ProfileContent from "./components/ProfileContent";
 import ProfileExperiences from "./components/ProfileExperiences";
 import ProfileProgress from "./components/ProfileProgress";
 import ProfileSessions from "./components/ProfileSessions";
+import SkillVerificationSection from "./components/SkillVerificationSection";
 import EditProfileModal from "./components/EditProfileModal";
 import EditSkillsModal from "./components/EditSkillsModal";
 import ExperienceModal, {
@@ -51,6 +63,13 @@ import ExperienceModal, {
 import ContentModal, {
   type ContentFormState,
 } from "./components/ContentModal";
+import SessionModal, {
+  type SessionFormState,
+} from "./components/SessionModal";
+import RateSessionModal from "./components/RateSessionModal";
+import ProgressModal, {
+  type ProgressFormState,
+} from "./components/ProgressModal";
 
 export interface ProfileFormState {
   firstName: string;
@@ -59,8 +78,16 @@ export interface ProfileFormState {
   university: string;
 }
 
+function toDatetimeLocal(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export default function ProfilePage() {
   const { t } = useTranslation();
+  const myUserId = useAuthStore((s) => s.user?.userId);
 
   const {
     data: profile,
@@ -71,15 +98,9 @@ export default function ProfilePage() {
   const { mutateAsync: updateProfile, isPending: isUpdating } =
     useUpdateMyProfile();
 
-  // Only used to resolve the display name in ProfileStats.
-  // Learning direction editing lives in ProfileHeader.
   const { data: learningDirections = [] } = useLearningDirections();
-
-  // Single catalog of 12 topics — used for both skills and interests.
-  const {
-    data: allSkills = [],
-    isLoading: allSkillsLoading,
-  } = useSkills();
+  const { data: allSkills = [], isLoading: allSkillsLoading } = useSkills();
+  const { data: connections = [] } = useAcceptedConnections();
 
   const {
     profileSkills,
@@ -95,15 +116,10 @@ export default function ProfilePage() {
     isLoading: profileInterestsLoading,
   } = useMyInterests();
 
-  const {
-    mutateAsync: addInterest,
-    isPending: isAddingInterest,
-  } = useAddMyInterest();
-
-  const {
-    mutateAsync: removeInterest,
-    isPending: isRemovingInterest,
-  } = useRemoveMyInterest();
+  const { mutateAsync: addInterest, isPending: isAddingInterest } =
+    useAddMyInterest();
+  const { mutateAsync: removeInterest, isPending: isRemovingInterest } =
+    useRemoveMyInterest();
 
   const {
     data: ratings = [],
@@ -139,15 +155,21 @@ export default function ProfilePage() {
   const updateExperience = useUpdateExperience();
   const deleteExperience = useDeleteExperience();
 
+  const createProgress = useCreateProgress();
+  const updateProgress = useUpdateProgress();
+  const deleteProgress = useDeleteProgress();
+
   const createContent = useCreateEducationalContent();
   const updateContent = useUpdateEducationalContent();
   const deleteContent = useDeleteEducationalContent();
 
-  const [activeTab, setActiveTab] = useState<ProfileTab>("skills");
+  const createSession = useCreateLearningSession();
+  const updateSession = useUpdateLearningSession();
+  const rateSession = useRateLearningSession();
 
+  const [activeTab, setActiveTab] = useState<ProfileTab>("skills");
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isEditSkillsOpen, setIsEditSkillsOpen] = useState(false);
-
   const [skillSearch, setSkillSearch] = useState("");
 
   const [form, setForm] = useState<ProfileFormState>({
@@ -158,27 +180,46 @@ export default function ProfilePage() {
   });
 
   const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
-
   const [editingExperience, setEditingExperience] =
     useState<ExperienceResponse | null>(null);
+  const [experienceForm, setExperienceForm] = useState<ExperienceFormState>({
+    title: "",
+    description: "",
+  });
 
-  const [experienceForm, setExperienceForm] =
-    useState<ExperienceFormState>({
-      title: "",
-      description: "",
-    });
+  const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
+  const [editingProgress, setEditingProgress] =
+    useState<ProgressResponse | null>(null);
+  const [progressForm, setProgressForm] = useState<ProgressFormState>({
+    learningDirectionId: "",
+    level: "",
+    startedAt: "",
+  });
 
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-
   const [editingContent, setEditingContent] =
     useState<EducationalContentResponse | null>(null);
-
   const [contentForm, setContentForm] = useState<ContentFormState>({
     title: "",
     description: "",
     contentType: "",
     contentUrl: "",
   });
+
+  // --- Sessions state ---
+  const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
+  const [editingSession, setEditingSession] =
+    useState<LearningSessionResponse | null>(null);
+  const [sessionForm, setSessionForm] = useState<SessionFormState>({
+    connectionId: "",
+    title: "",
+    description: "",
+    scheduledAt: "",
+    meetingUrl: "",
+    status: "Scheduled",
+  });
+  const [ratingSession, setRatingSession] =
+    useState<LearningSessionResponse | null>(null);
 
   const firebaseUser = getAuth().currentUser;
 
@@ -198,12 +239,9 @@ export default function ProfilePage() {
       .toUpperCase();
   }, [displayName]);
 
-  // Resolve name for stats from learning-directions list if available,
-  // otherwise fall back to skills list (same 12 topics).
   const currentLearningDirection = useMemo(() => {
     const id = profile?.learningDirectionId;
     if (!id) return undefined;
-
     return (
       learningDirections.find((d) => d.id === id) ??
       allSkills.find((s) => s.id === id)
@@ -220,7 +258,6 @@ export default function ProfilePage() {
     [profileInterests]
   );
 
-  // Same 12 topics for skills picker
   const filteredSkills = useMemo(() => {
     const query = skillSearch.trim().toLowerCase();
     if (!query) return allSkills;
@@ -229,7 +266,6 @@ export default function ProfilePage() {
     );
   }, [allSkills, skillSearch]);
 
-  // Same 12 topics for interests picker
   const filteredInterests = useMemo(() => {
     const query = skillSearch.trim().toLowerCase();
     if (!query) return allSkills;
@@ -240,14 +276,12 @@ export default function ProfilePage() {
 
   const openEditProfile = () => {
     if (!profile) return;
-
     setForm({
       firstName: profile.firstName ?? "",
       lastName: profile.lastName ?? "",
       bio: profile.bio ?? "",
       university: profile.university ?? "",
     });
-
     setIsEditProfileOpen(true);
   };
 
@@ -273,11 +307,19 @@ export default function ProfilePage() {
 
   const handleAddInterest = async (interestId: string) => {
     if (profileInterestIds.has(interestId)) return;
-    await addInterest(interestId);
+    try {
+      await addInterest(interestId);
+    } catch {
+      // Interests may 404 until backend is seeded
+    }
   };
 
   const handleRemoveInterest = async (interestId: string) => {
-    await removeInterest(interestId);
+    try {
+      await removeInterest(interestId);
+    } catch {
+      // ignore
+    }
   };
 
   const openCreateExperience = () => {
@@ -297,12 +339,10 @@ export default function ProfilePage() {
 
   const handleExperienceSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
     const payload = {
       title: experienceForm.title.trim() || null,
       description: experienceForm.description.trim() || null,
     };
-
     if (editingExperience) {
       await updateExperience.mutateAsync({
         id: editingExperience.id,
@@ -311,17 +351,61 @@ export default function ProfilePage() {
     } else {
       await createExperience.mutateAsync(payload);
     }
-
     setIsExperienceModalOpen(false);
     setEditingExperience(null);
   };
 
   const handleDeleteExperience = async (id: string) => {
-    const confirmed = window.confirm(
-      t("profile.experiences.deleteConfirm")
-    );
+    const confirmed = window.confirm(t("profile.experiences.deleteConfirm"));
     if (!confirmed) return;
     await deleteExperience.mutateAsync(id);
+  };
+
+  const openCreateProgress = () => {
+    setEditingProgress(null);
+    setProgressForm({ learningDirectionId: "", level: "", startedAt: "" });
+    setIsProgressModalOpen(true);
+  };
+
+  const openEditProgress = (item: ProgressResponse) => {
+    setEditingProgress(item);
+    setProgressForm({
+      learningDirectionId: item.learningDirectionId,
+      level: item.level ?? "",
+      startedAt: item.startedAt ? item.startedAt.slice(0, 10) : "",
+    });
+    setIsProgressModalOpen(true);
+  };
+
+  const handleProgressSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (editingProgress) {
+      await updateProgress.mutateAsync({
+        id: editingProgress.id,
+        payload: {
+          level: progressForm.level || null,
+          startedAt: progressForm.startedAt || undefined,
+        },
+      });
+    } else {
+      await createProgress.mutateAsync({
+        learningDirectionId: progressForm.learningDirectionId,
+        level: progressForm.level || null,
+        startedAt: progressForm.startedAt,
+      });
+    }
+    setIsProgressModalOpen(false);
+    setEditingProgress(null);
+  };
+
+  const handleDeleteProgress = async (id: string) => {
+    const confirmed = window.confirm(
+      t("profile.progress.deleteConfirm", {
+        defaultValue: "Delete this progress record?",
+      })
+    );
+    if (!confirmed) return;
+    await deleteProgress.mutateAsync(id);
   };
 
   const openCreateContent = () => {
@@ -348,14 +432,12 @@ export default function ProfilePage() {
 
   const handleContentSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
     const payload = {
       title: contentForm.title.trim() || null,
       description: contentForm.description.trim() || null,
       contentType: contentForm.contentType.trim() || null,
       contentUrl: contentForm.contentUrl.trim() || null,
     };
-
     if (editingContent) {
       await updateContent.mutateAsync({
         id: editingContent.id,
@@ -364,17 +446,91 @@ export default function ProfilePage() {
     } else {
       await createContent.mutateAsync(payload);
     }
-
     setIsContentModalOpen(false);
     setEditingContent(null);
   };
 
   const handleDeleteContent = async (id: string) => {
-    const confirmed = window.confirm(
-      t("profile.content.deleteConfirm")
-    );
+    const confirmed = window.confirm(t("profile.content.deleteConfirm"));
     if (!confirmed) return;
     await deleteContent.mutateAsync(id);
+  };
+
+  const openScheduleSession = () => {
+    setEditingSession(null);
+    setSessionForm({
+      connectionId: "",
+      title: "",
+      description: "",
+      scheduledAt: "",
+      meetingUrl: "",
+      status: "Scheduled",
+    });
+    setIsSessionModalOpen(true);
+  };
+
+  const openEditSession = (session: LearningSessionResponse) => {
+    setEditingSession(session);
+    setSessionForm({
+      connectionId: session.connectionId,
+      title: session.title ?? "",
+      description: session.description ?? "",
+      scheduledAt: toDatetimeLocal(session.scheduledAt),
+      meetingUrl: session.meetingUrl ?? "",
+      status: session.status ?? "Scheduled",
+    });
+    setIsSessionModalOpen(true);
+  };
+
+  const handleSessionSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const scheduledAtIso = sessionForm.scheduledAt
+      ? new Date(sessionForm.scheduledAt).toISOString()
+      : new Date().toISOString();
+
+    if (editingSession) {
+      await updateSession.mutateAsync({
+        id: editingSession.id,
+        payload: {
+          title: sessionForm.title.trim() || null,
+          description: sessionForm.description.trim() || null,
+          scheduledAt: scheduledAtIso,
+          meetingUrl: sessionForm.meetingUrl.trim() || null,
+          status: sessionForm.status || null,
+        },
+      });
+    } else {
+      if (!sessionForm.connectionId) return;
+      await createSession.mutateAsync({
+        connectionId: sessionForm.connectionId,
+        title: sessionForm.title.trim() || null,
+        description: sessionForm.description.trim() || null,
+        scheduledAt: scheduledAtIso,
+        meetingUrl: sessionForm.meetingUrl.trim() || null,
+      });
+    }
+
+    setIsSessionModalOpen(false);
+    setEditingSession(null);
+  };
+
+  const handleCompleteSession = async (session: LearningSessionResponse) => {
+    await updateSession.mutateAsync({
+      id: session.id,
+      payload: { status: "Completed" },
+    });
+  };
+
+  const handleRateSubmit = async (payload: {
+    score: number;
+    review: string | null;
+  }) => {
+    if (!ratingSession) return;
+    await rateSession.mutateAsync({
+      sessionId: ratingSession.id,
+      payload,
+    });
+    setRatingSession(null);
   };
 
   if (profileLoading) {
@@ -393,9 +549,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-[calc(100vh-64px)] bg-background px-4 py-10 text-text-primary">
         <div className="mx-auto max-w-xl rounded-3xl border border-error/30 bg-error-soft p-6 text-center">
-          <h1 className="text-lg font-bold">
-            {t("profile.error.title")}
-          </h1>
+          <h1 className="text-lg font-bold">{t("profile.error.title")}</h1>
           <p className="mt-2 text-sm text-text-secondary">
             {t("profile.error.description")}
           </p>
@@ -423,21 +577,23 @@ export default function ProfilePage() {
               skillsCount={profileSkills.length}
               learningDirectionName={currentLearningDirection?.name}
             />
-
-            <ProfileAbout bio={profile.bio} onEdit={openEditProfile} />
+            <ProfileAbout bio={profile.bio} />
           </div>
         </section>
 
         <ProfileTabs activeTab={activeTab} onChange={setActiveTab} />
 
         {activeTab === "skills" && (
-          <ProfileSkillsSection
-            profileSkills={profileSkills}
-            profileSkillsLoading={profileSkillsLoading}
-            profileInterests={profileInterests}
-            profileInterestsLoading={profileInterestsLoading}
-            onEditSkills={openEditSkills}
-          />
+          <>
+            <ProfileSkillsSection
+              profileSkills={profileSkills}
+              profileSkillsLoading={profileSkillsLoading}
+              profileInterests={profileInterests}
+              profileInterestsLoading={profileInterestsLoading}
+              onEditSkills={openEditSkills}
+            />
+            <SkillVerificationSection />
+          </>
         )}
 
         {activeTab === "reviews" && (
@@ -468,6 +624,10 @@ export default function ProfilePage() {
               progress={progress}
               isLoading={progressLoading}
               isError={progressError}
+              onAdd={openCreateProgress}
+              onEdit={openEditProgress}
+              onDelete={handleDeleteProgress}
+              isDeleting={deleteProgress.isPending}
             />
 
             <ProfileExperiences
@@ -484,6 +644,11 @@ export default function ProfilePage() {
               sessions={sessions}
               isLoading={sessionsLoading}
               isError={sessionsError}
+              onSchedule={openScheduleSession}
+              onEdit={openEditSession}
+              onComplete={handleCompleteSession}
+              onRate={setRatingSession}
+              isUpdating={updateSession.isPending}
             />
           </div>
         )}
@@ -510,9 +675,7 @@ export default function ProfilePage() {
           filteredInterests={filteredInterests}
           profileInterestIds={profileInterestIds}
           skillsLoading={profileSkillsLoading || allSkillsLoading}
-          interestsLoading={
-            profileInterestsLoading || allSkillsLoading
-          }
+          interestsLoading={profileInterestsLoading || allSkillsLoading}
           isAdding={isAdding}
           isRemoving={isRemoving}
           isAddingInterest={isAddingInterest}
@@ -541,19 +704,59 @@ export default function ProfilePage() {
         />
       )}
 
+      {isProgressModalOpen && (
+        <ProgressModal
+          mode={editingProgress ? "edit" : "create"}
+          form={progressForm}
+          setForm={setProgressForm}
+          skills={learningDirections}
+          isSaving={createProgress.isPending || updateProgress.isPending}
+          onClose={() => {
+            setIsProgressModalOpen(false);
+            setEditingProgress(null);
+          }}
+          onSubmit={handleProgressSubmit}
+        />
+      )}
+
       {isContentModalOpen && (
         <ContentModal
           mode={editingContent ? "edit" : "create"}
           form={contentForm}
           setForm={setContentForm}
-          isSaving={
-            createContent.isPending || updateContent.isPending
-          }
+          isSaving={createContent.isPending || updateContent.isPending}
           onClose={() => {
             setIsContentModalOpen(false);
             setEditingContent(null);
           }}
           onSubmit={handleContentSubmit}
+        />
+      )}
+
+      {isSessionModalOpen && (
+        <SessionModal
+          mode={editingSession ? "edit" : "create"}
+          form={sessionForm}
+          setForm={setSessionForm}
+          connections={connections}
+          myUserId={myUserId}
+          isSaving={createSession.isPending || updateSession.isPending}
+          onClose={() => {
+            setIsSessionModalOpen(false);
+            setEditingSession(null);
+          }}
+          onSubmit={handleSessionSubmit}
+        />
+      )}
+
+      {ratingSession && (
+        <RateSessionModal
+          sessionTitle={
+            ratingSession.title || t("profile.sessions.untitled")
+          }
+          isSaving={rateSession.isPending}
+          onClose={() => setRatingSession(null)}
+          onSubmit={handleRateSubmit}
         />
       )}
     </div>

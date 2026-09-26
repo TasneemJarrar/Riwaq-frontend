@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
   Share08Icon,
+  ShieldEllipsisIcon,
   UserAdd01Icon,
 } from "@hugeicons/core-free-icons";
 
@@ -18,6 +19,8 @@ import {
   useDeleteConnection,
 } from "../../hooks/useConnections";
 
+import RequestVerificationModal from "./components/RequestVerificationModal";
+
 export default function PublicProfilePage() {
   const { userId } = useParams<{ userId: string }>();
   const { t } = useTranslation();
@@ -26,6 +29,7 @@ export default function PublicProfilePage() {
   const myUserId = useAuthStore((s) => s.user?.userId);
 
   const [shared, setShared] = useState(false);
+  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
 
   const {
     data: profile,
@@ -227,6 +231,18 @@ export default function PublicProfilePage() {
                     : t("feed.post.share")}
                 </button>
 
+                {/* Request skill verification */}
+                <button
+                  type="button"
+                  onClick={() => setIsVerifyOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-1 px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:bg-surface-soft hover:text-text-primary"
+                >
+                  <HugeiconsIcon icon={ShieldEllipsisIcon} size={16} />
+                  {t("profile.verification.request", {
+                    defaultValue: "Verify skill",
+                  })}
+                </button>
+
                 {/* Relationship action */}
                 {relationshipLoading ? (
                   <button
@@ -238,7 +254,6 @@ export default function PublicProfilePage() {
                   </button>
                 ) : isConnected ? (
                   <div className="flex flex-wrap gap-2">
-                    {/* Message */}
                     <button
                       type="button"
                       onClick={handleMessage}
@@ -247,7 +262,6 @@ export default function PublicProfilePage() {
                       Message
                     </button>
 
-                    {/* Remove connection */}
                     <button
                       type="button"
                       onClick={handleRemoveConnection}
@@ -369,24 +383,26 @@ export default function PublicProfilePage() {
               )}
             </div>
 
-            <ul className="mt-4 space-y-3">
-              {ratings.slice(0, 8).map((rating) => {
-                const raterName =
-                  [rating.rater.firstName, rating.rater.lastName]
-                    .filter(Boolean)
-                    .join(" ") || t("profile.unknownUser");
+            <div className="mt-4 space-y-4">
+              {ratings.map((rating) => {
+                const raterName = [
+                  rating.rater?.firstName,
+                  rating.rater?.lastName,
+                ]
+                  .filter(Boolean)
+                  .join(" ")
+                  .trim() || t("profile.unknownUser");
 
                 return (
-                  <li
+                  <div
                     key={rating.id}
-                    className="rounded-xl border border-border bg-surface-soft p-4"
+                    className="rounded-2xl border border-border bg-surface-soft p-4"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm font-semibold text-text-primary">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-semibold text-text-primary">
                         {raterName}
-                      </span>
-
-                      <span className="text-xs font-medium text-gamification-text">
+                      </p>
+                      <span className="text-sm font-bold text-gamification-text">
                         ★ {rating.score}
                       </span>
                     </div>
@@ -396,22 +412,21 @@ export default function PublicProfilePage() {
                         {rating.review}
                       </p>
                     )}
-                  </li>
+                  </div>
                 );
               })}
-            </ul>
-          </section>
-        )}
-
-        {/* Reviews loading state */}
-        {ratingsLoading && (
-          <section className="mt-6 rounded-3xl border border-border bg-surface-2 p-5 shadow-card sm:p-6">
-            <div className="h-5 w-24 animate-pulse rounded bg-surface-soft" />
-
-            <div className="mt-4 h-20 animate-pulse rounded-xl bg-surface-soft" />
+            </div>
           </section>
         )}
       </main>
+
+      {isVerifyOpen && userId && (
+        <RequestVerificationModal
+          mentorUserId={userId}
+          mentorName={displayName}
+          onClose={() => setIsVerifyOpen(false)}
+        />
+      )}
     </div>
   );
 }
